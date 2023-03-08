@@ -1,0 +1,477 @@
+<pre>
+  BIP: 352
+  Layer: Applications
+  Title: Silent Payments
+  Author: josibake <josibake@protonmail.com>
+          Ruben Somsen <rsomsen@gmail.com>
+  Comments-URI: https://github.com/bitcoin/bips/wiki/Comments:BIP-0352
+  Status: Draft
+  Type: Informational
+  Created: 2023-03-09
+  License: BSD-2-Clause
+</pre>
+
+== Introduction ==
+
+=== Abstract ===
+
+This document specifies a protocol for static payment addresses in Bitcoin without on-chain linkability of payments or a need for on-chain notifications.
+
+=== Copyright ===
+
+This BIP is licensed under the BSD 2-clause license.
+
+=== Motivation ===
+
+Using a new address for each Bitcoin transaction is a crucial aspect of maintaining privacy. This often requires a secure interaction between sender and receiver so that the receiver can hand out a fresh address, a batch of fresh addresses, or a method for the sender to generate addresses on-demand, such as an xpub.
+
+However, interaction is often infeasible and in many cases undesirable. To solve for this, various protocols have been proposed which use a static payment address and notifications sent via the blockchain<ref name="out_of_band_notifications">'''Why not use out-of-band notifications''' Out of band notifications (e.g. using something other than the Bitcoin blockchain) have been proposed as a way of addressing the privacy and cost concerns of using the Bitcoin blockchain as a messaging layer. This, however, simply moves the privacy and cost concerns somewhere else and increases the risk of losing money due to a notification not being reliably delivered, or even censored, and makes this notification data critical for backup to recover funds.</ref>. These protocols eliminate the need for interaction, but at the expense of increased costs for one-time payments and a noticeable footprint in the blockchain, potentially revealing metadata about the sender and receiver. Notification schemes also allow the receiver to link all payments from the same sender, compromising sender privacy.
+
+This proposal aims to address the limitations of these current approaches by presenting a solution that eliminates the need for interaction, eliminates the need for notifications, and protects both sender and receiver privacy. These benefits come at the cost of requiring wallets to scan the blockchain in order to detect payments. This added requirement is generally feasible for full nodes but poses a challenge for light clients. While it is possible today to implement a privacy-preserving light client at the cost of increased bandwidth, light client support is considered an area of open research (see [[#appendix-a-light-client-support|Appendix A: Light Client Support]]).
+
+== Goals ==
+
+We aim to present a protocol which satisifies the following properties:
+
+* No increase in the size or cost of transactions
+* Resulting transactions blend in with other bitcoin transactions and can't be distinguished
+* Transactions can't be linked to a silent payment address by an outside observer
+* No sender-receiver interaction required
+* No linking of multiple payments to the same sender
+* Each silent payment goes to a unique address, avoiding accidental address reuse
+* Supports payment labeling
+* Uses existing seed phrase or descriptor methods for backup and recovery
+* Separates scanning and spending responsibilities
+* Compatible with other spending protocols, such as CoinJoin
+* Light client/SPV wallet support
+* Protocol is upgradeable
+
+== Overview ==
+
+We first present an informal overview of the protocol. In what follows, uppercase letters represent public keys, lowercase letters represent private keys, ''||'' refers to byte concatenation, and ''G'' represents the generator point for ''secp256k1''. Each section of the overview is incomplete on its own and is meant to build on the previous section in order to introduce and briefly explain each aspect of the protocol. For the full protocol specification, see [[#specification|Specification]].
+
+''' Simple case '''
+
+Bob publishes a public key ''B'' as a silent payment address. Alice discovers Bob's silent payment address, selects a UTXO with private key ''a'', public key ''A'' and creates a destination output ''P'' for Bob in the following manner:
+
+* Let ''P = B + hash(a·B)·G''
+* Encode ''P'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output
+
+Since ''a·B == b·A'' ([https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman Elliptic-curve Diffie–Hellman]), Bob scans with his private key ''b'' by collecting the input public keys for each transaction with at least one unspent taproot output and performing the ECDH calculation until ''P'' is found (i.e. calculating ''P = B + hash(b·A)·G'' and seeing that ''P'' is present in the transaction outputs).
+
+''' Creating more than one output '''
+
+In order to allow Alice to create more than one output for Bob<ref name="why_more_than_one_output">'''Why allow for more than one output?''' Allowing Alice to break her payment to Bob into multiple amounts opens up a number of privacy improving techniques for Alice, making the transaction look like a CoinJoin or better hiding the change amount by splitting both the payment and change outputs into multiple amounts. It also allows for Alice and Carol to both have their own unique output paying Bob in the event they are in a collaborative transaction and both paying Bob's silent payment address.</ref>, we include an integer in the following manner:
+
+* Let ''k = 0''
+* Let ''P<sub>0</sub> = B + hash(a·B || n)·G''
+* For additional outputs:
+** Increment ''k'' by one (''k++'')
+** Let ''P<sub>i</sub> = B + hash(a·B || n)·G''
+
+Bob detects this output the same as before by searching for ''P<sub>0</sub> = B + hash(b·A || 0)·G''. Once he detects the first output, he must:
+
+* Check for ''P<sub>1</sub> = B + hash(b·A || 1)·G''
+* If ''P<sub>1</sub>'' is not found, stop
+* If ''P<sub>1</sub>'' is found, continue to check for ''P<sub>2</sub>'' and so on until an additional output is not found
+
+Since Bob will only perform these subsequent checks after a transaction with at least one output paying him is found, the increase to his overall scanning requirement is negligible.
+
+''' Preventing address reuse '''
+
+If Alice were to use a different UTXO from the same public key ''A'' for a subsequent payment to Bob, she would end up deriving the same destination ''P''. To prevent this, Alice should include a hash of the outpoint in the following manner:
+
+* Let ''outpoint_hash = hash(txid || vout)''
+* Let ''P<sub>0</sub> = B + hash(outpoint_hash·a·B || 0)·G''
+
+Bob must include the same ''outpoint_hash'' when scanning.
+
+''' Using all inputs '''
+
+In our simplified example we have been referring to Alice's transactions as having only one input ''A'', but in reality a Bitcoin transaction can have many inputs. Instead of requiring Alice to pick a particular input and requiring Bob to check each input separately, we can instead require Alice to perform the tweak with the sum of the input public keys<ref name="other_inputs">'''What about inputs without public keys?''' Inputs without public keys can still be spent in the transaction but are simply ignored in the silent payments protocol.</ref>. This significantly reduces Bob's scanning requirement, makes light client support more feasible<ref name="using_all_inputs">'''How does using all inputs help light clients?''' If Alice uses a random input for the tweak, Bob necessarily has to have access to and check all transaction inputs, which requires performing an ECC multiplication per input. If instead Alice performs the tweak with the sum of the input public keys, Bob only needs the summed 33 byte public key per transaction and only does one ECC multiplication per transaction. Bob can then use BIP158 block filters to determine if any of the outputs exist in a block and thus avoids downloading transactions which don't belong to him. It is still an open question as to how Bob can source the 32 bytes per transaction in a trustless manner, see [[#appendix-a-light-client-support|Appendix A: Light Client Support]] for more details.</ref>, and protects Alice's privacy in collaborative transaction protocols such as CoinJoin<ref name=""all_inputs_and_coinjoin">'''Why does using all inputs matter for CoinJoin?''' If Alice uses a random input to create the output for Bob, this necessarily reveals to Bob which input Alice has control of. If Alice is paying Bob as part of a CoinJoin, this would reveal which input belongs to her, degrading the anonymity set of the CoinJoin and giving Bob more information about Alice. If instead all inputs are used, Bob has no way of knowing which input(s) belong to Alice. This comes at the cost of increased complexity as the CoinJoin participants now need to coordinate to create the silent payment output and would need to use [https://gist.github.com/RubenSomsen/be7a4760dd4596d06963d67baf140406 Blind Diffie–Hellman] to prevent the other participants from learning who Alice is paying.</ref>.
+
+Alice performs the tweak with the sum of her input private keys in the following manner:
+
+* Let ''outpoints_hash = hash(txid<sub>0</sub> || vout<sub>0</sub> || ... || txid<sub>n</sub> || vout<sub>n</sub>)''
+* Let ''a = a<sub>0</sub> + a<sub>1</sub> + ... + a<sub>n</sub>''
+* Let ''P<sub>0</sub> = B + hash(outpoints_hash·a·B || 0)·G''
+
+''' Spend and Scan Key '''
+
+Since Bob needs his private key ''b'' to check for incoming payments, this requires ''b'' to be exposed to an online device. To minimize the risks involved, Bob can instead publish an address of the form ''(B<sub>scan</sub>, B<sub>spend</sub>)''. This allows Bob to keep ''b<sub>spend</sub>'' in offline cold storage and perform the scanning with the public key ''B<sub>spend</sub>'' and private key ''b<sub>scan</sub>''. Alice performs the tweak using both of Bob's public keys in the following manner:
+
+* Let ''P<sub>0</sub> = B<sub>spend</sub> + hash(outpoints_hash·a·B<sub>scan</sub> || 0)·G''
+
+Bob detects this payment by calculating ''P<sub>0</sub> = B<sub>spend</sub> + hash(outpoints_hash·b<sub>scan</sub>·A)·G'' with his online device and can spend from his cold storage signing device using ''(b<sub>spend</sub> + hash(outpoints_hash·b<sub>scan</sub>·A)) mod p'' as the private key.
+
+''' Labels '''
+
+For a single silent payment address of the form ''(B<sub>scan</sub>, B<sub>spend</sub>)'', Bob may wish to differentiate incoming payments. Naively, Bob could publish multiple silent payment addresses, but this would require him to scan for each one, which becomes prohibitively expensive. Instead, Bob can label his spend public key ''B<sub>spend</sub>'' with an integer ''m'' in the following way:
+
+* Let ''B<sub>m</sub> = B<sub>spend</sub> + m·G''
+* Publish ''(B<sub>scan</sub>, B<sub>0</sub>)'', ''(B<sub>scan</sub>, B<sub>1</sub>)'' etc.
+
+Alice performs the tweak as before using one of the published ''(B<sub>scan</sub>, B<sub>m</sub>)'' pairs. Bob detects the labeled payment in the following manner:
+
+* Let ''P<sub>0</sub> = B<sub>spend</sub> + hash(outpoints_hash·b<sub>scan</sub>·A || 0)·G''
+* Subtract ''P<sub>0</sub>'' from each of the transaction outputs and check if the remainder matches any of the labels (''1·G'', 2·G'' etc.) that the wallet has previously used
+
+It is important to note that an outside observer can easily deduce that each published ''(B<sub>scan</sub>, B<sub>m</sub>)'' pair is owned by the same entity as each published address will have ''B<sub>scan</sub>'' in common. As such, labels are not meant as a way for Bob to manage separate identities, but rather a way for Bob to determine the source of an incoming payment.
+
+''' Labels for change '''
+
+Bob can also use labels for managing his own change outputs. To do so, he can reserve a secret change label in the following manner:
+
+* Let ''B<sub>change</sub> = B<sub>spend</sub> + hash(b<sub>scan</sub>)·G''
+
+Now, whenever Bob is spending (to a silent payment address or otherwise), he can create a change output for himself using the silent payments protocol and his change label in the following manner:
+
+* Let ''a = a<sub>0</sub> + a<sub>1</sub> + ... + a<sub>n</sub>'' represent the private keys of the inputs Bob is using to fund the transaction
+* Let ''P<sub>change</sub> = B<sub>change</sub> + hash(outpoints_hash·a·B<sub>scan</sub> || 0)·G''
+
+This gives Bob an alternative to using BIP32 for managing change, while still allowing him to know which of his unspent outputs were change when recovering his wallet from the master key. The change label needs to remain a secret in order to ensure nobody else can label payments as change.
+
+== Specification ==
+
+We use the following functions and conventions:
+
+* The constant ''n'' refers to the secp256k1 curve order, ''0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141''.
+* ''outpoint'' (36 bytes): the <code>COutPoint</code> of an input (32-byte txid, least significant byte first || 4-byte vout, least significant byte first)<ref name="why_little_endian">'''Why are outpoints little-endian?''' Despite using big endian throughout the rest of the BIP, outpoints are sorted and hashed matching their transaction serialization, which is little-endian. This allows a wallet to parse a serialized transaction for use in silent payments without needing to re-order the bytes when computing the outpoint hash. Note: despite outpoints being stored and serialized as little-endian, the transaction hash (txid) is always displayed as big-endian.</ref>
+* ser<sub>32</sub>(i): serializes a 32-bit unsigned integer ''i'' as a 4-byte sequence, most significant byte first.
+* ser<sub>256</sub>(p): serializes the integer p as a 32-byte sequence, most significant byte first.
+* ser<sub>P</sub>(P): serializes the coordinate pair P = (x,y) as a byte sequence using SEC1's compressed form: (0x02 or 0x03) || ser<sub>256</sub>(x), where the header byte depends on the parity of the omitted y coordinate.
+
+For everything not defined above, we use the notation from [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#specification BIP340].
+
+=== Versions ===
+
+This document defines version 0 (''sp1q''). Version is communicated through the address in the same way as Segwit addresses. Future upgrades to silent payments will require a new version. As much as possible, future upgrades should support receiving from older wallets (e.g. a silent payments v0 wallet can send to both v0 and v1 addresses). Any changes that break compatibility with older silent payment versions should be a new BIP.
+
+Future silent payments versions will use the following scheme:
+
+{| class="wikitable"
+|-
+!
+!0
+!1
+!2
+!3
+!4
+!5
+!6
+!7
+!Compatibility
+|-
+!+0
+|q||p||z||r||y||9||x||8||rowspan="4" | backwards compatible
+|-
+!+8
+|g||f||2||t||v||d||w||0
+|-
+!+16
+|s||3||j||n||5||4||k||h
+|-
+!+24
+|c||e||6||m||u||a||7|| -
+|}
+
+''v31'' (l) is reserved for a backwards incompatible change, if needed. For silent payments v0:
+
+* If the receiver's silent payment address version is:
+** ''v0'': check that the data part is exactly 66-bytes. Otherwise, fail
+** ''v1'' through ''v30'': read the first 66-bytes of the data part and discard the remaining bytes (if any)
+** ''v31'': fail
+* Receiver addresses are always [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot outputs<ref name="why_taproot">'''Why only taproot outputs?''' Providing too much optionality for the protocol makes it difficult to implement and can be at odds with the goal of providing the best privacy. Limiting to taproot outputs helps simplify the implementation significantly while also putting users in the best eventual anonymity set.</ref>
+* The sender should sign with one of the sighash flags ''DEFAULT'', ''ALL'', ''SINGLE'', ''NONE'' (''ANYONECANPAY'' is unsafe). It is strongly recommended implementations use ''SIGHASH_ALL'' (''SIGHASH_DEFAULT'' for taproot inputs) when possible<ref name="why_not_sighash_anyonecanpay">'''Why is it unsafe to use ''SIGHASH_ANYONECANPAY''?''' Since the output address for the receiver is derived from from the sum of the [[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]] public keys, the inputs must not change once the sender has signed the transaction. If the inputs are allowed to change after the fact, the receiver will not be able to calculate the shared secret needed to find and spend the output. It is currently an open question on how a future version of silent payments could be made to work with new sighash flags such as ''SIGHASH_GROUP'' and ''SIGHASH_ANYPREVOUT''.</ref>
+* Inputs used to derive the shared secret are from the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' list
+
+=== Scanning transactions ===
+
+A v0 transaction MUST be scanned if and only if all of the following are true:
+
+* The transaction contains at least one BIP341 taproot output
+* The transaction has at least one input from the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' list
+* The transaction does not spend a new, undefined output type (e.g. SegWit versions > 1)<ref name="skip_txs_with_unknown_prevouts">'''Why skip transactions that spend unknown output scripts?''' Skipping transactions that spend unknown output scripts allows us to have a clean upgrade path for silent payments by avoiding the need to scan the same transaction multiple times with different rule sets. If a fancy new output type is added in the future and silent payments v1 is released with support, we would want to avoid having to first scan the transaction with the silent payment v0 rules and then again with the silent payment v1 rules. Note: this restriction only applies to the inputs of a transaction.</ref>
+
+Otherwise, skip the transaction. This is to ensure forward compatibility with future versions of silent payments without requiring future versions to scan a transaction multiple times with different rule sets.
+
+=== Address encoding ===
+
+A silent payment address is constructed in the following manner:
+
+* Let ''B<sub>scan</sub>, b<sub>scan</sub> = Receiver's scan public key and corresponding private key''
+* Let ''B<sub>spend</sub>, b<sub>spend</sub> = Receiver's spend public key and corresponding private key''
+* Let ''B<sub>m</sub> = B<sub>spend</sub> + m·G'', where ''m'' an optional integer tweak for labeling
+** In the case of ''m'' = 0, no label is applied and ''B<sub>m</sub> = B<sub>spend</sub>''
+* The final address is a [https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki Bech32m] encoding of:
+** The human-readable part "sp" for mainnet, "tsp" for testnets (e.g.  signet, testnet)
+** The data-part values:
+*** The character "q", to represent a silent payment address of version 0
+*** The 66 byte concatenation of the receiver's public keys, ''ser<sub>P</sub>(B<sub>scan</sub>) || ser<sub>P</sub>(B<sub>m</sub>)''
+
+Note: [https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki BIP173] imposes a 90 character limit for Bech32 strings, whereas a silent payment address requires ''at least'' 117 characters<ref name="why_117_chars"> ''' Why do silent payment addresses need at least 117 characters?''' A silent payment address is a bech32m encoding comprised of the following parts:
+
+
+* HRP [2-3 characters]
+* separator [1 character]
+* version [1-2 characters]
+* payload, 66 bytes concatenated pubkeys [ceil(66*8/5) = 106 characters]
+* checksum [6 characters]
+
+
+For a silent payments v0 address, this results in a 117 character address when using a 3 character HRP. Future versions of silent payment addresses may add to the payload, which is why a 1023 character limit is suggested.</ref>. Additionally, since higher versions may add to the data field, it is recommended implementations use a limit of 1023 characters (see [https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki#checksum-design BIP173: Checksum design] for more details).
+
+=== Outpoints hash ===
+
+The sender and receiver MUST calculate an outpoints hash for the transaction in the following manner:
+
+* Collect each ''outpoint'' used as an input to the transaction
+* Let ''outpoints = outpoint<sub>0</sub> || ... || outpoint<sub>n</sub>'', sorted lexicographically by txid and vout, ascending order<ref name="why_sort_outpoints">'''Why are outpoints sorted before hashing?''' This way the silent payment output does not need to be recalculated if the wallet changes the order of inputs, e.g. at signing time or during an RBF bump.</ref>
+* Let ''outpoints_hash = sha256(outpoints)''
+
+=== Inputs For Shared Secret Derivation ===
+
+While any UTXO with known output scripts can be used to fund the transaction, the sender and receiver MUST use inputs from the following list when deriving the shared secret:
+
+* ''P2TR''
+* ''P2WPKH''
+* ''P2SH-P2WPKH''
+* ''P2PKH''
+
+Inputs with conditional branches or multiple public keys (e.g. ''CHECKMULTISIG'') are not included as this introduces malleability and would allow a sender to re-sign with a different set of public keys after the silent payment output has been derived. This is not a concern when the sender controls all of the inputs, but is an issue for CoinJoins and other collaborative protocols, where a malicious participant can participate in deriving the silent payment address with one set of keys and then re-broadcast the transaction with signatures for a different set of public keys. P2TR can have hidden conditional branches (script path), but we work around this by using only the output public key.
+
+''' P2TR '''
+
+The sender MUST use the private key corresponding to the taproot output key (i.e. the tweaked private key for a key path spend). This can be a single private key or an aggregate key (e.g. taproot outputs using MuSig2 or FROST)<ref name="musig_frost_support">'''Are key aggregation techniques like FROST and MuSig2 supported?''' Any taproot output able to do a key path spend is supported. While a full specification of how to do this securely is outside the scope of this BIP, in theory any offline key aggregation technique can be used, such as FROST or MuSig2. This would require participants to perform the ECDH step collaboratively e.g. ''ECDH = a<sub>0</sub>·B<sub>scan</sub> + a<sub>1</sub>·B<sub>scan</sub> + ... + a<sub>t</sub>·B<sub>scan</sub>'' and ''P = B<sub>spend</sub> + hash(outpoints_hash·ECDH || 0)·G''. Additionally, it may be necessary for the participants to provide a DLEQ proof to ensure they are not acting maliciously.</ref>. If this key is not available, the output cannot be included as an input to the transaction. The receiver always uses the taproot output key when scanning, regardless of whether the taproot output is using a key path spend or a script path spend<ref name="why_always_output_pubkey">''' Why not skip all taproot script path spends? ''' This causes malleability issues for CoinJoins. If the silent payments protocol skipped taproot script path spends, this would allow an attacker to join a CoinJoin round, participate in deriving the silent payment address using the tweaked private key for a key path spend, and then broadcast their own version of the transaction using the script path spend. If the receiver were to only consider key path spends, they would skip the attacker's script path spend input when deriving the shared secret and not be able to find the funds. Additionally, there may be scenarios where a sender has access to the key path private key but spends the output using the script path.</ref>.
+
+The one exception is script path spends that use NUMS point ''H'' as their internal key (where ''H = lift_x(0x50929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0)'' which is constructed by taking the hash of the standard uncompressed encoding of the secp256k1 base point ''G'' as X coordinate, see [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki#constructing-and-spending-taproot-outputs BIP341: Constructing and spending Taproot outputs] for more details), in which case the output will be skipped for the purposes of shared secret derivation<ref name="why_ignore_h">'''Why skip outputs with H as the internal taproot key?''' If use cases get popularized where the taproot key path cannot be used, these outputs can still be included without getting in the way of making a silent payment, provided they specifically use H as their internal taproot key.</ref>.
+
+''' P2WPKH '''
+
+The sender performs the tweak using the private key for the output and the receiver obtains the public key from the ''witness''.
+
+''' P2SH-P2WPKH '''
+
+The sender performs the tweak using the private key for the nested ''P2WPKH'' output and the receiver obtains the public key from the ''witness''.
+
+''' P2PKH '''
+
+The sender performs the tweak using the private key for the output and SHOULD sign using the standard script template:
+
+
+    scriptSig: <Signature> <Public Key>
+
+
+The receiver obtains the public key from the ''scriptSig''. The receiver MUST parse the ''scriptSig'' for the public key, even if the ''scriptSig'' is non-standard (e.g. <code><dummy> OP_DROP <Signature> <Public Key></code>). This is to address the [https://en.bitcoin.it/wiki/Transaction_malleability third-party malleability of ''P2PKH'' ''scriptSigs''].
+
+=== Sender ===
+
+==== Selecting inputs ====
+
+The sending wallet performs coin selection as usual with the following restrictions:
+
+* At least one input MUST be from the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' list
+* Exclude inputs with witness version > 1 (see ''[[#scanning-transactions|Scanning transactions]]'')
+* For each taproot output spent the sending wallet MUST have access to the private key corresponding to the taproot output key, unless ''H'' is used as the internal public key
+
+==== Creating outputs ====
+
+After the inputs have been selected, the sender can create one or more outputs for one or more silent payment addresses in the following manner:
+
+* Collect the private keys for each input from the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' list
+* For each private key ''a<sub>i</sub>'' corresponding to a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output, check that the private key produces a point with an even y-value and negate the private key if not<ref name="why_negate_taproot_private_keys">'''Why do taproot private keys need to be checked?''' Recall from [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki BIP340] that each x-only public key has two corresponding private keys, ''d'' and ''n - d''. To maintain parity between sender and receiver, it is necessary to use the private key corresponding to the even y-value when performing the ECDH step since the receiver will assume the even y-value when summing the taproot x-only public keys.</ref>
+* Let ''a = a<sub>0</sub> + a<sub>1</sub> + ... + a<sub>n</sub>'', where each ''a<sub>i</sub>'' has been negated if necessary
+* Generate the ''outpoints_hash'', using the method described above
+* Group receiver silent payment addresses by ''B<sub>scan</sub>'' (e.g. each group consists of one ''B<sub>scan</sub>'' and one or more ''B<sub>m</sub>'')
+* For each group:
+** Let ''ecdh_shared_secret = outpoints_hash·a·B<sub>scan</sub>''
+** Let ''k = 0''
+** For each ''B<sub>m</sub>'' in the group:
+*** Let ''t<sub>k</sub> = sha256(ser<sub>P</sub>(ecdh_shared_secret) || ser<sub>32</sub>(k))''
+*** Let ''P<sub>mn</sub> = B<sub>m</sub> + t<sub>k</sub>·G''
+*** Encode ''P<sub>mn</sub>'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output
+*** Optionally, repeat with k++ to create additional outputs for the current ''B<sub>m</sub>''
+*** If no additional outputs are required, continue to the next ''B<sub>m</sub>'' with ''k++''<ref name="why_not_the_same_tn">''' Why not re-use ''t<sub>k</sub>'' when paying different labels to the same receiver?''' If paying the same entity but to two separate labeled addresses in the same transaction without incrementing ''k'', the two outputs would be ''B<sub>spend</sub> + t<sub>k</sub>·G + i·G'' and ''B<sub>spend</sub> + t<sub>k</sub>·G + j·G''. The attacker could subtract the two values and observe that the distance between i and j is small. This would allow them to deduce that this transaction is a silent payment transaction and that a single entity received two outputs, but won't tell them who the entity is.</ref>
+** Optionally, if the sending wallet implements receiving silent payments, it can create change outputs in the following manner:
+*** Let ''A<sub>change</sub> = A<sub>spend</sub> + sha256(ser<sub>256</sub>(a<sub>scan</sub>))·G''
+*** Let ''change_shared_secret = outpoints_hash·a·A<sub>scan</sub>''
+*** Let ''k = 0''
+*** For each change output desired:
+**** Let ''c<sub>k</sub> = sha256(ser<sub>P</sub>(change_shared_secret) || ser<sub>32</sub>(k))''
+**** Let ''C<sub>k</sub> = A<sub>change</sub> + c<sub>k</sub>·G''
+**** Encode ''C<sub>k</sub>'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output
+**** Repeat with ''k++'' for additional change outputs
+
+=== Receiver ===
+
+==== Key Derivation ====
+
+Two keys are needed to create a silent payments address: the spend key and the scan key. While these keys can be generated independently, wallet software SHOULD use BIP32 derivation<ref name="bip32_derivation">'''Why use BIP32 hardened derivation?''' Using BIP32 derivation allows users to add silent payments to an existing master seed. It also ensures that a user's silent payment funds are recoverable in any wallet which supports BIP32 derivation. Using hardened derivation ensures that it is safe to export the scan private key without exposing the master key or spend private key.</ref> to ensure compatibility across wallets.
+
+A scan and spend key pair using BIP32 derivation are defined (taking inspiration from [https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki BIP44]) in the following manner:
+
+
+     Scan private key: m / purpose' / coin_type' / account' / 1' / 0
+    Spend private key: m / purpose' / coin_type' / account' / 0' / 0
+
+Wallet software MUST use hardened derivation to ensure the master key is not exposed in the event the scan private key is compromised. Purpose is a constant set to ''352'' following the BIP43 recommendation. Refer to [https://github.com/bitcoin/bips/blob/master/bip-0043.mediawiki BIP43] and [https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki BIP44] for more details.
+
+==== Scanning ====
+
+If each of the checks in ''[[#scanning-transactions|Scanning transactions]]'' passes, the receiving wallet must:
+
+* Generate the ''outpoints_hash'', using the method described above
+* Let ''A = A<sub>0</sub> + A<sub>1</sub> + ... + A<sub>n</sub>'', where each ''A<sub>i</sub>'' is the public key of an input from the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' list
+* Let ''ecdh_shared_secret = outpoints_hash·b<sub>scan</sub>·A''
+* Check for outputs:
+** Let ''outputs_to_check'' be the taproot output keys from all unspent taproot outputs in the transaction
+** Starting with ''k = 0'':
+*** Let ''t<sub>k</sub> = sha256(ser<sub>P</sub>(ecdh_shared_secret) || ser<sub>32</sub>(k))''
+*** Compute ''P<sub>k</sub> = B<sub>spend</sub> + t<sub>k</sub>·G''
+*** For each ''output'' in ''outputs_to_check'':
+**** If ''P<sub>k</sub>'' equals ''output'':
+***** Add ''P<sub>k</sub>'' to the wallet
+***** Remove ''output'' from ''outputs_to_check'' and rescan ''outputs_to_check'' with ''k++''
+**** Else, if the wallet has precomputed labels (including the change label, if used)<ref name="precompute_labels">''' Why precompute labels?''' Precomputing the labels is not strictly necessary: a wallet could track the max number of labels it has used (call it ''M'') and scan for labels by adding ''m·G'' to ''P<sub>0</sub>'' for each label ''m'' up to ''M'' and comparing to the transaction outputs. This is more performant than precomputing the labels and checking via subtraction in cases where the number of eligible outputs exceeds the number of labels in use. In practice this will mainly apply to users that choose never to use labels, or users that use a single label for generating silent payment change outputs. If using a large number of labels, the wallet would need to add all possible labels to each output. This ends up being ''n·M'' additions, where ''n'' is the number of outputs in the transaction and ''M'' is the number of labels in the wallet. By precomputing the labels, the wallet only needs to compute ''m·G'' once when creating the labeled address and can determine if a label was used via a lookup, rather than adding each label to each output.</ref>:
+***** Compute ''m·G = output - P<sub>k</sub>''
+***** Check if ''m·G'' exists in the list of labels used by the wallet
+***** If a match is found:
+****** Add the ''P<sub>k</sub> + m·G'' to the wallet
+****** Remove ''output'' from ''outputs_to_check'' and rescan ''outputs_to_check'' with ''k++''
+***** If the label is not found, negate ''output'' and check again
+*** If no matches are found, stop
+
+==== Spending ====
+
+Recall that a silent payments is of the form ''B<sub>spend</sub> + t<sub>k</sub>·G + m·G'', where ''m·G'' is an optional label. To spend a silent payments output:
+
+* Let ''d = (b<sub>spend</sub> + t<sub>k</sub> + m) mod n'', where ''m'' is the optional label integer encoded as a 256-bit number
+* Spend the [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] output with the private key ''d''
+
+==== Backup and Recovery ====
+
+Since each silent payment output address is derived independently, regular backups are recommended. When recovering from a backup, the wallet will need to scan since the last backup to detect new payments.
+
+If using a seed/seed phrase only style backup, the user can recover the wallet's unspent outputs from the UTXO set (i.e. only scanning transactions with at least one unspent taproot output) and can recover the full wallet history by scanning the blockchain starting from the wallet birthday. If a wallet uses labels or generates its change addresses using the change label, this information SHOULD be included in the backup. If the user does not know whether labels or the change label were used, it is strongly recommended they always check for the change label when recovering from backup and precompute a large number of labels (e.g. 100k labels) to use when re-scanning. This ensures that the wallet can recover all funds from only a seed/seed phrase backup.
+
+== Backward Compatibility ==
+
+Silent payments introduces a new address format and protocol for sending and as such is not compatible with older wallet software or wallets which have not implemented the silent payments protocol.
+
+== Test Vectors ==
+
+A [[bip-0352/send_and_receive_test_vectors.json|collection of test vectors in JSON format]] are provided, along with a [[bip-0352/reference.py|python reference implementation]]. Each test vector consists of a sending test case and corresponding receiving test case. This is to allow sending and receiving to be implemented separately. To ensure determinism while testing, sort the array of ''B<sub>m</sub>'' by amount (see the [[bip-0352/reference.py|reference implementation]]). Test cases use the following schema:
+
+''' test_case '''
+
+    {
+        "comment": "Comment describing the behavior being tested",
+        "sending": [<array of sender test objects>],
+        "receiving": [<array of recipient test objects>],
+    }
+
+''' sender '''
+
+    {
+        "given": {
+            "outpoints": [<array of tuples, where each tuple represents an outpoint: (txid, vout)>],
+            "input_priv_keys": [<array of tuples, where each tuple is a hex encoded private key and boolean for taproot: (priv_key, is_taproot)>],
+            "recipients": [<array of tuples, where each tuple is a bech32m string representing a silent payment address and an float amount: (silent_payment_address, amount)>]
+        },
+        "expected": {
+            "outputs": [<array of key, value objects, where the key is the hex encoding of 32-byte x-only public key and the value an integer amount: {taproot_x_only_key: amount}]
+        },
+    }
+
+''' recipient '''
+
+    {
+        "supports_labels": <boolean, if the receiving wallet does not implement labels, test cases with a value of `true` can be skipped>
+        "given": {
+            "outpoints": [<array of tuples, where each tuple represents an outpoint: (txid, vout)>],
+            "input_pub_keys": [<array of hex encoded public keys, either 33-byte compressed or 32-byte x-only>],
+            "bip32_seed": "byte data for generating a bip32 master seed",
+            "scan_priv_key": <hex encoded scan private key (derived from the bip32_seed)>,
+            "spend_priv_key": <hex encoded spend private key (derived from the bip32_seed)>,
+            "labels": {<dictionary object, where the key is the hex encoding (33-byte compressed) of m*G and the value is the hex encoded 256-bit integer m>},
+         },
+         "expected": {
+             "addresses": [<array of bech32m strings, one for the silent payment address and each labeled address (if used)>],
+             "outputs": [
+                 {
+                     "pub_key": <hex encoded x-only public key>,
+                     "priv_key_teak": <hex encoded private key tweak data>.
+                     "signature": <hex encoded signature for the output (produced with spend_priv_key + priv_key_tweak)>
+                 },
+                 ...
+             ]
+         }
+     }
+
+Wallets should include inputs not in the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' list when testing to ensure that only inputs from the list are being used for shared secret derivation. Additionally, receiving wallets should include non-silent payment outputs for themselves in testing to ensure silent payments scanning does not interfere with regular outputs detection.
+
+=== Functional tests ===
+
+Below is a list of functional tests which should be included in sending and receiving implementations.
+
+==== Sending ====
+
+* Ensure taproot outputs are excluded during coin selection if the sender does not have access to the key path private key (unless using ''H'' as the taproot internal key)
+* Ensure the silent payment address is re-derived if inputs are added or removed during RBF
+
+==== Receiving ====
+
+* Ensure the public key can be extracted from non-standard ''P2PKH'' scriptSigs
+* Ensure taproot script path spends are included, using the taproot output key (unless ''H'' is used as the taproot internal key)
+* Ensure the scanner can extract the public key from each of the input types supported (e.g. ''P2WPKH'', ''P2SH-P2WPKH'', etc)
+
+== Appendix A: Light Client Support ==
+
+This section proposes a few ideas for how light clients could be supported in ways that preserve bandwidth and privacy. While this is out of scope for the current BIP, it is included to movitate further research into this topic. In this context, a light client refers to any bitcoin wallet client which does not process blocks and does not have a direct connection to a node which does process blocks (e.g. a full node). Based on this definition, clients that directly connect to a personal electrum server or a bitcoin node are not light clients.
+
+This distinction makes the problem for light clients more clear: light clients need a way to source the necessary data for performing the tweaks and a way of determining if any of the generated outputs exist in a block.
+
+=== Tweak Data ===
+
+Recall that a silent payment eligible transaction is any transaction with at least one input from the ''Inputs for Shared Secret Derivation'' list and at least one unspent taproot output. Full nodes (or any index server backed by a full node, such as electrum server) can build an index which collects all of the eligible public keys for a silent payments eligible transaction, sums them up, multiplies the sum by the ''outpoints_hash'', and serves them to clients. This would be 32 bytes per silent payment eligible transaction.
+
+For a typical bitcoin block of ~3500 txs, lets assume every transaction is a silent payments eligible transaction. This means a client would need to request ''32 bytes * 3500'' of data per block (roughly 100 kb per block). If a client were to request data for every block, this would amount to ~450MB per month, assuming 100% taproot usage and all outputs remain unspent for > 1 month. As of today, these numbers are closer to 2kb - 10kb per block (10MB - 40MB per month)<ref name="appendix_data">''' Data for Appendix A ''' These numbers are based on data from January 2023 until June 2023 (the last 6 months of data at time time of writing). See [https://github.com/josibake/bitcoin-data-analysis/blob/main/notebooks/silent-payments-light-client-data.ipynb Silent payments light client data] for the full analysis.</ref>.
+
+=== Transaction cut-through ===
+
+It is unlikely a light client would need to scan every block and as such can take advantage of transaction cut-through, depending on how often they choose to scan for new blocks. Empirically, ~75% of transactions with at least one unspent taproot output will have spent all taproot UTXOs in 326 blocks or less<ref name="appendix_data"></ref>. This means a client which only scans once every 3 days could ''significantly'' cut down on the number of blocks and the number of transactions per block that they need to request by only asking for data on transactions that were created since their last scan and that still have at least one unspent taproot output as of the current block height. Assuming 100% taproot usage, a client that scans once a month would likely only need around 50MB worth of data. Based on current taproot adoption, a light client scanning once every 3 days would use roughly 15MB per month and a client scanning once per month would use less than 5MB per month.
+
+[[File:bip-0352/scan_data_downloader_per_month.png]]
+
+=== BIP158 ===
+
+Once a light client has the tweak data for a block, they can determine whether or not an output to them exists in the block using BIP158 block filters. Per BIP158, they would then request the entire block and add the transaction to their wallet, though it maybe be possible to only request the prevout txids and vouts for all transactions with at least one taproot output, along with the scriptPubKeys and amounts. This would allow the client to download the necessary data for constructing a spending transaction, without downloading the entire block. How this affects the security assumptions of BIP158 is an open question.
+
+=== Out-of-band notifications ===
+
+Assuming a secure messaging protocol exists, the sender can send an encrypted (using the scan public key of the silent payment address) notification to the receiver with the following information:
+* The spend public key (communicates the label)
+* The shared secret portion of the private key (i.e ''hash(ecdh_shared_secret || n)'')
+* The outpoint and amount (so it's immediately spendable)
+
+It is important to note that these notifications are not required. At any point, the receiver can fall back to scanning for silent payment transactions if they don't trust the notifications they are receiving, are being spammed with fake notifications, or if they are concerned that they are not receiving notifications.
+
+A malicious notification could potentially cause the following issues:
+
+* You did not actually receive money to the stated key
+** This can be probabilistically resolved by matching the key against the BIP158 block filters and assuming it's not a false positive, or fully resolved by downloading the block
+* You received money but the outpoint or amount is incorrect, so attempts to spend it will fail or cause you to overpay fees
+** There doesn't seem to be much motivation for malicious senders to ever do this, but light clients need to take into account that this can occur and should ideally check for it by downloading the block
+* The private key is correct but it wasn't actually derived using the silent payment protocol, causing recovery from back-up to fail (unsafe - no implementation should ever allow this)
+** This can be detected by downloading the tweak data of the corresponding block and should be resolved by immediately spending the output
+
+Wallet designers can choose which tradeoffs they find appropriate. For example, a wallet could check the block filter to at least probabilistically confirm the likely existence of the UTXO, thus efficiently cutting down on spam. The payment could then be marked as unconfirmed until a scan is performed and the existence of the UTXO in accordance to the silent payment specification is verified.
+
+
+== Acknowledgements ==
+
+This document is the result of many discussions and contains contributions by a number of people. The authors wish to thank all those who provided valuable feedback and reviews, including the participants of the [https://gist.github.com/RubenSomsen/21c477c90c942acf45f8e8f5c1ad4fae BIP47 Prague discussion], the [https://github.com/josibake/silent-payments-workshop Advancing Bitcoin silent payments Workshop], and [https://btctranscripts.com/bitcoin-core-dev-tech/2023-04-26-silent-payments/ coredev]. The authors would like to also thank [https://github.com/w0xlt w0xlt] for writing the initial implementation of silent payments.
+
+== Rationale and References ==
+<references/>
+
