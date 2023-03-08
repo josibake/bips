@@ -1,0 +1,210 @@
+<pre>
+  BIP: ????
+  Layer: Applications
+  Title: Silent Payments
+  Author: josibake <josibake@protonmail.com>
+          Ruben Somsen <rsomsen@gmail.com>
+  Comments-URI: https://github.com/bitcoin/bips/wiki/Comments:BIP-????
+  Status: Draft
+  Type: Informational
+  Created: 2023-03-09
+  License: MIT
+</pre>
+
+== Introduction ==
+
+=== Abstract ===
+
+=== Copyright ===
+
+=== Motivation ===
+
+Using a new address for each Bitcoin transaction is a crucial aspect of maintaining privacy. This often requires a secure interaction between sender and receiver so that the receiver can hand out a fresh address, a batch of fresh addresses, or a method for the sender to generate addresses on-demand, such as an xpub.
+
+However, interaction is often infeasible and in many cases undesirable. To solve for this, various protocols have been proposed which use a static payment address and notifications sent via the blockchain <ref name="out_of_band_notifications">'''Why not use out-of-band notifications''' Out of band notifications (e.g. using something other than the Bitcoin blockchain) have been proposed as a way of addressing the privacy and cost concerns of using the Bitcoin blockchain as a messaging layer. This, however, simply moves the privacy and cost concerns somewhere else and introduces the risk of losing money due to a notification not being reliably delivered, or even censored, and makes this notification data critical for backup to recover funds.</ref>. These protocols eliminate the need for interaction, but at the expense of increased costs for one-time payments and a noticeable footprint in the blockchain, potentially revealing metadata about the sender and receiver. Notification schemes also allow the receiver to link all payments from the same sender, compromising sender privacy.
+
+This proposal aims to address the limitations of these current approaches by presenting a solution that eliminates the need for interaction, eliminates the need for notifications, and protects both sender and receiver privacy.
+
+== Goals ==
+
+We aim to present a transaction protocol which satisifies the following properties:
+
+* No increase in the size or cost of transactions
+* Resulting transactions blend in with other bitcoin transactions and can’t be distinguished
+* Transactions can’t be linked to a silent payment address by an outside observer
+* No sender-receiver interaction required
+* No linking of multiple payments to the same sender
+* Each silent payment goes to a unique address, avoiding accidental address reuse
+* Supports payment labeling
+* Uses existing seed phrase or descriptor methods for backup and recovery
+* Separates scanning and spending responsibilities
+* Compatible with other spending protocols, such as CoinJoin
+* Light client/SPV wallet support
+* Protocol is upgradeable
+
+== Overview ==
+
+We first present an informal overview of the protocol followed by a full specification.
+
+''' Simple case ''' Bob wishes to receive payments from Alice, so he publishes his public key ''B'' as a silent payment address. Alice selects a UTXO with private key ''a'' and public key ''A'' from her wallet to fund the transaction and creates the output ''P'' for Bob in the following way:
+
+* Let ''P = HASH(a·B)·G + B''
+
+Bob detects this payment by computing ''P = HASH(b·A)·G + B'', since ''a·B == b·A'' ([https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman Elliptic Curve Diffie-Hellman]).
+
+''' Creating more than one output ''' In the event Alice needs more than one output for Bob<ref name="why_more_than_one_output">'''Why allow for more than one output?''' Allowing Alice to break her payment to Bob into multiple amounts opens up a number of privacy improving techniques for Alice, such as making the transaction look like a CoinJoin or better hiding the change amount by splitting both the payment and change outputs into multiple amounts. It also allows for Alice and Carol to both have their own unique output paying Bob in the event they are in a collaborative transaction and both paying Bob's silent payment address.</ref>, she can do so in the following manner:
+
+* Let ''P<sub>0</sub> = HASH(a·B || 0)·G + B''
+* For additional outputs:
+** Let ''P<sub>i</sub> = HASH(a·B || n)·G + B'', where ''n'' starts from 1 and is incremented for each subsequent output<ref name="why_not_hash_the_vout_index">'''Why not hash the vout index when creating additional outputs?''' This means that silent payment output(s) would always appear first in the transaction vouts and the change outputs after. Silent payments are meant to be indistinguishable from any other bitcoin transaction, and as such we want to avoid adding any restrictions to how transactions are created.</ref>
+
+Bob detects this output the same as before by searching for ''P<sub>0</sub> = HASH(b·A || 0)·G + B''. Once he detects the first output, he must:
+
+* Check for ''P<sub>1</sub> = HASH(b·A || 1)·G + B''
+* If ''P<sub>1</sub>'' is not found, stop
+* If ''P<sub>1</sub>'' is found, continue to check for ''P<sub>2</sub>'' and so on until an additional output is not found
+
+Since Bob will only perform these subsquent checks after a transaction with at least one output paying him is found, the increase to his overall scanning requirement is negligible.
+
+''' Preventing address reuse '''
+
+If Alice were to use a different UTXO from the same public key ''A'' for a subsequent payment to Bob, she would end up deriving the same destination ''P''. To prevent this, Alice should include a hash of the outpoint in the following manner:
+
+* Let ''outpoint_hash = HASH(txid || vout)''
+* Let ''P<sub>0</sub> = HASH(outpoint_hash·a·B || 0)·G + B''
+
+''' Using all inputs '''
+
+In our simplified example we have been referring to Alice’s transactions as having only one input ''A'', but in reality a Bitcoin transaction can have many inputs. Instead of requiring Alice to pick a particular input and requiring Bob to check each input separately, we can instead require Alice to perform the tweak with the sum of the input public keys<ref name="other_inputs">'''What about inputs without public keys?''' add a blurb here for why we need only inputs with public keys (TODO)</ref>. This significantly reduces Bob's scanning requirement, makes light client support more feasible<ref name="using_all_inputs">'''How does using all inputs help light clients?''' If Alice uses a random input for the tweak, Bob necessarily has to have access all transaction inputs and perform an ECC multiplication per input. If instead Alice performs the tweak with the sum of the input public keys, Bob only needs the summed 32 byte public key per transaction and only does one ECC multiplication per transaction. Bob can then use BIP158 block filters to determine if any of the outputs exist in a block and thus avoids downloading transactions which don't belong to him.</ref>, and protects Alice's privacy in collaborative transaction protocols such as CoinJoin<ref name=""all_inputs_and_coinjoin">'''Why does using all inputs matter for CoinJoin?''' If Alice uses a random input to create the output for Bob, this necessarily reveals to Bob which input Alice has control of. If Alice is paying Bob as part of a CoinJoin, this would reveal which input belongs to her, degrading the anonymity set of the CoinJoin and giving Bob more information about Alice. If instead all inputs are used, Bob has no way of knowing which input(s) belong to Alice. This comes at the cost of increased complexity as the CoinJoin participants now need to collaborate to create the tweaked output for Bob. See (TODO) for more details</ref>.
+
+Alice performs the tweak with the sum of her input private keys in the following manner:
+
+* Let ''outpoints_hash = HASH(txid<sub>1</sub> || vout<sub>1</sub> || … txid<sub>n</sub> || vout<sub>n</sub>)''
+* Let ''a = a<sub>0</sub> + a<sub>1</sub> … + a<sub>n</sub>''
+* Let ''A = A<sub>0</sub> + A<sub>1</sub> … + A<sub>n</sub>''
+* Let ''P<sub>0</sub> = HASH(outpoints_hash·a·B || 0)·G + B''
+
+''' Spend and Scan Key '''
+
+Since Bob needs his private key ''b'' to check for incoming payments, this requires ''b'' to be exposed to an online device. To minimize the risks involved, Bob can instead publish an address of the form ''(B<sub>scan</sub>, B<sub>spend</sub>)''. This allows Bob to keep ''b<sub>spend</sub>'' in offline cold storage and perform the scanning with the public key ''B<sub>spend</sub>'' and private key ''b<sub>scan</sub>''. Alice performs the tweak using both of Bob’s public keys in the following manner:
+
+* Let ''P<sub>0</sub> = HASH(outpoints_hash·a·B<sub>scan</sub> || 0)·G + B<sub>spend</sub>''
+
+Bob detects this payment by calculating ''P<sub>0</sub> = HASH(outpoints_hash·b<sub>scan</sub>·A)·G + B<sub>spend</sub>'' with his online device and can spend from his cold storage signing device using ''(HASH(outpoints_hash·b<sub>scan</sub>·A) + b<sub>spend</sub>) mod p'' as the private key.
+
+''' Labels ''' For a single silent payment address of the form ''(B<sub>scan</sub>, B<sub>spend</sub>)'', Bob may wish to differentiate incoming payments by using labels. Naively, Bob could publish multiple silent payment addresses, but this would require him to scan for each one, which becomes prohibitively expensive<ref name="labels">'''ECC multiplication vs ECC addition''' TODO</ref>. Instead, Bob can tweak his spend public key ''B<sub>spend</sub>'' with an integer ''m'' in the following way:
+
+* Let ''B<sub>m</sub> = B<sub>spend</sub> + m·G''
+* Publish ''(B<sub>scan</sub>, B<sub>0</sub>)'', ''(B<sub>scan</sub>, B<sub>1</sub>) …''
+
+Alice performs the tweak same as before using one of the published ''(B<sub>scan</sub>, B<sub>m</sub>)'' pairs. Bob detects the labeled payment in the following manner:
+
+* Let ''P<sub>0</sub> = HASH(outpoints_hash·b<sub>scan</sub>·A || 0)·G + B<sub>spend</sub>''
+* Compute ''P<sub>0m</sub> = P<sub>0</sub> + m·G'' for each ''m''
+* For each ''P<sub>0m</sub>'' in {''P<sub>00</sub> … P<sub>0m</sub>''}, check if any are present in the transaction outputs
+
+== Specification ==
+
+In what follows, we use the notation from [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#specification BIP340].
+
+=== Address encoding ===
+
+A silent payment address is constructed in the following manner:
+
+* Let ''HRP = sp''
+* Let ''v = a single version byte, set to 0''
+* Let ''B<sub>scan</sub>, b<sub>scan</sub> = Recipient’s [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki BIP340] scan key pair''
+* Let ''B<sub>spend</sub>, b<sub>spend</sub> = Recipient’s [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki BIP340] spend key pair''
+* Let ''B<sub>m</sub> = B<sub>spend</sub> + m·G'', where ''m'' an optional integer tweak for labeling
+** In the case of ''m'' = 0, no label is applied and ''B<sub>m</sub> = B<sub>spend</sub>''
+* The final address is a 66 byte address of the form ''HRP || v || B<sub>m</sub> || B<sub>scan</sub>''
+
+=== Outpoint hash ===
+
+The sender and receiver MUST calculate an outpoint hash for the transaction in the following manner:
+
+* Collect each ''outpoint'' from the transaction, where an outpoint is the 36 byte little-endian representation of the previous output transaction id and vout index
+* Sort the outpoints alphanumerically, in ascending order
+* Let ''outpoints = outpoint<sub>0</sub> || outpoint<sub>1</sub> || … || outpoint<sub>n</sub>''
+* Let ''outpoint_hash = SHA256(outpoints), truncated to the first 8 bytes''<ref name="why_8byte_hash">'''How was an 8 byte hash chosen?''' Reference the birthday problem and numbers there, etc (TODO)</ref>
+
+=== Sender ===
+
+==== Selecting inputs ====
+
+The sending wallet performs coin selection as usual with the added restriction that the sending wallet must be able to produce a signature for each UTXO. This excludes any UTXOs not requiring a signature for spending as these do not represent elliptic curve points. Given that these types of scripts are not widely used, no changes to coin selection will be required for the majority of wallets.<ref name="selecting_inputs">'''How to handle multisig and complex scripts''' TODO</ref>
+
+==== Creating outputs ====
+
+After the inputs have been selected, the sender creates the receiver's output(s) in the following manner:
+
+* Let ''a = a<sub>0</sub> + a<sub>1</sub> + … a<sub>i</sub>'', where each ''a<sub>i</sub>'' is the 256-bit private key corresponding to the ''ith'' input public key of the transaction
+* Compute the tweak:
+** Let ''t<sub>0</sub> = SHA256(SHA256(outpoint_hash·a·B<sub>scan</sub> || 0))''
+** Optionally, if more outputs are desired:
+*** Starting from ''n = 1''
+**** Let ''t<sub>n</sub> = SHA256(SHA256(outpoint_hash·a·B<sub>scan</sub> || n))''
+**** Repeat with ''n++ for each additional output''
+* For each ''t<sub>n</sub>'':
+** Let ''P<sub>mn</sub> = t<sub>n</sub>·G + B<sub>m</sub>''
+** Encode ''P<sub>mn</sub>'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output<ref name="why_taproot">'''Why only taproot outputs?''' Providing too much optionality for the protocol makes it difficult to implement and can be at odds with the goal of providing the best privacy. Limiting to taproot outputs helps simplify the implementation significantly while also putting users in the best anonymity set going forward. TODO: Would be nice to add some links here regarding not bifurcating address space and the goals of taproot to be the largest anonymity set for bitcoin.</ref>
+
+=== Receiver ===
+
+==== Key Derivation ====
+
+Two keys are needed to create a silent payments address: the spend key and the scan key. While these keys can be generated independently, wallet software SHOULD use BIP32 derivation<ref name="bip32_derivation">'''Why use BIP32 hardened derivation?''' Using BIP32 derivation allows users to add silent payments to an existing master seed. It also ensures that a users silent payment funds are recoverable in any wallet which supports BIP32 derivation. Using hardened derivation ensures that it is safe to export the scan private key without exposing the master key or spend private key</ref> to ensure compatibility across wallets.
+
+A scan and spend key pair using BIP32 derivation are defined in the following manner:
+
+* Let ''b<sub>spend</sub> = m/BIP’/0’/k''
+* Let ''b<sub>scan</sub> = m/BIP’/1’/k''
+
+Each value of ''k'' represents a pair of private keys needed for creating a silent payment address. In this way, multiple silent payment addresses can be derived from a single master key. Wallet software MUST use hardened derivation to ensure the master key is not exposed in the event the scan private key is compromised.
+
+==== Scanning ====
+
+For each transaction the receiving wallet suspects might be a silent payment to themselves, it must<ref name="data_needed_for_scanning>'''What data does a wallet need for scanning''' A wallet needs a 32 byte public key which represents the sum of the input public keys of a transaction, the truncated 8 byte hash of the transaction input outpoints, and some method of determining whether or not a scriptPubKey exists in a block. For full nodes, all of this data is already available. For light clients, they would need to request the tweak data from a server with access to the necessary information for tweaking and determine existence in a block using something like BIP158. BIP158 is recommended over other methods as this is the most trust minimized, privacy preserving method for light clients today.</ref>:
+
+* Generate the ''outpoint_hash'', using the method described above
+* Let ''A = A<sub>0</sub> + A<sub>1</sub> + … A<sub>i</sub>'', where each ''A<sub>i</sub>'' is the public key corresponding to the ''ith'' input of the transaction
+* Compute the tweaks:
+** Let ''M = the number of labels the Recipient wallet has used''
+** Let ''t<sub>0</sub> = SHA256(SHA256(outpoint_hash·b<sub>scan</sub>·A || 0))''
+** Compute ''P<sub>00</sub> = t<sub>0</sub>·G + B<sub>spend</sub>''
+** If ''M'' is greater than 0:
+*** Let ''m = 1'':
+*** While ''m'' &lt;= ''M'':
+**** Compute ''P<sub>m0</sub> = P<sub>00</sub> + B<sub>spend</sub> + m·G''
+**** repeat with ''m++''
+** For each public key ''P<sub>m0</sub>'' in {''P<sub>00</sub> … P<sub>M0</sub>''}:
+*** If ''P<sub>m0</sub>'' is detected in the transaction outputs, starting with ''n = 1'':
+**** Compute ''t<sub>n</sub> = SHA256(SHA256(outpoint_hash·b<sub>scan</sub>·A || n))''
+**** Check if ''P<sub>mn</sub> = (t<sub>n</sub> + m)·G + B<sub>spend</sub>'' is present in the remaining outputs
+**** If not, terminate
+**** If ''P<sub>mn</sub>'' is found, repeat with ''n++''
+
+For each output with public key ''P<sub>mn</sub>'', store the output, label ''m'', and tweak data ''t<sub>n</sub>'' in the wallet. ''P<sub>mn</sub>'' is spendable with the private key ''(x = t<sub>n</sub> + m + b<sub>spend</sub>) mod p''
+
+==== Backup and Recovery ====
+
+Since each silent payment output address is derived independently, descriptor wallets are recommended along with regular backups. When recovering from a backup, the wallet will need to scan since the last backup to detect new payments.
+
+If using a seed phrase only style backup, the user can recover the wallet’s current state from the UTXO set and can recover the wallet history by scanning the blockchain, starting from the wallet birthday.
+
+===== Recovery from the UTXO set =====
+
+The wallet computes a tweak for every unspent transaction containing at least one unspent taproot output, where the unspent output was created after the wallet birthday.
+
+===== Recovering transaction history =====
+
+All transactions created after the wallet birthday and with at least one taproot output will need to be scanned to recover the full transaction history.
+
+== Test Vectors ==
+
+== Rationale and References ==
+<references/>
+
+== Acknowledgements ==
+
+thanks to everyone!
