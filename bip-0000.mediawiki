@@ -46,17 +46,21 @@ We aim to present a transaction protocol which satisifies the following properti
 
 We first present an informal overview of the protocol followed by a full specification.
 
-''' Simple case ''' Bob wishes to receive payments from Alice, so he publishes his public key ''B'' as a silent payment address. Alice selects a UTXO with private key ''a'' and public key ''A'' from her wallet to fund the transaction and creates the output ''P'' for Bob in the following way:
+''' Simple case '''
+
+Bob wishes to receive payments from Alice, so he publishes his public key ''B'' as a silent payment address. Alice selects a UTXO with private key ''a'' and public key ''A'' from her wallet to fund the transaction and creates the output ''P'' for Bob in the following way:
 
 * Let ''P = HASH(a·B)·G + B''
 
 Bob detects this payment by computing ''P = HASH(b·A)·G + B'', since ''a·B == b·A'' ([https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman Elliptic Curve Diffie-Hellman]).
 
-''' Creating more than one output ''' In the event Alice needs more than one output for Bob<ref name="why_more_than_one_output">'''Why allow for more than one output?''' Allowing Alice to break her payment to Bob into multiple amounts opens up a number of privacy improving techniques for Alice, such as making the transaction look like a CoinJoin or better hiding the change amount by splitting both the payment and change outputs into multiple amounts. It also allows for Alice and Carol to both have their own unique output paying Bob in the event they are in a collaborative transaction and both paying Bob's silent payment address.</ref>, she can do so in the following manner:
+''' Creating more than one output '''
+
+In the event Alice needs more than one output for Bob<ref name="why_more_than_one_output">'''Why allow for more than one output?''' Allowing Alice to break her payment to Bob into multiple amounts opens up a number of privacy improving techniques for Alice, such as making the transaction look like a CoinJoin or better hiding the change amount by splitting both the payment and change outputs into multiple amounts. It also allows for Alice and Carol to both have their own unique output paying Bob in the event they are in a collaborative transaction and both paying Bob's silent payment address.</ref>, she can do so in the following manner:
 
 * Let ''P<sub>0</sub> = HASH(a·B || 0)·G + B''
 * For additional outputs:
-** Let ''P<sub>i</sub> = HASH(a·B || n)·G + B'', where ''n'' starts from 1 and is incremented for each subsequent output<ref name="why_not_hash_the_vout_index">'''Why not hash the vout index when creating additional outputs?''' This means that silent payment output(s) would always appear first in the transaction vouts and the change outputs after. Silent payments are meant to be indistinguishable from any other bitcoin transaction, and as such we want to avoid adding any restrictions to how transactions are created.</ref>
+** Let ''P<sub>i</sub> = HASH(a·B || n)·G + B'', where ''n'' starts from 1 and is incremented for each subsequent output
 
 Bob detects this output the same as before by searching for ''P<sub>0</sub> = HASH(b·A || 0)·G + B''. Once he detects the first output, he must:
 
@@ -92,7 +96,9 @@ Since Bob needs his private key ''b'' to check for incoming payments, this requi
 
 Bob detects this payment by calculating ''P<sub>0</sub> = HASH(outpoints_hash·b<sub>scan</sub>·A)·G + B<sub>spend</sub>'' with his online device and can spend from his cold storage signing device using ''(HASH(outpoints_hash·b<sub>scan</sub>·A) + b<sub>spend</sub>) mod p'' as the private key.
 
-''' Labels ''' For a single silent payment address of the form ''(B<sub>scan</sub>, B<sub>spend</sub>)'', Bob may wish to differentiate incoming payments by using labels. Naively, Bob could publish multiple silent payment addresses, but this would require him to scan for each one, which becomes prohibitively expensive<ref name="labels">'''ECC multiplication vs ECC addition''' TODO</ref>. Instead, Bob can tweak his spend public key ''B<sub>spend</sub>'' with an integer ''m'' in the following way:
+''' Labels '''
+
+For a single silent payment address of the form ''(B<sub>scan</sub>, B<sub>spend</sub>)'', Bob may wish to differentiate incoming payments by using labels. Naively, Bob could publish multiple silent payment addresses, but this would require him to scan for each one, which becomes prohibitively expensive<ref name="labels">'''ECC multiplication vs ECC addition''' TODO</ref>. Instead, Bob can tweak his spend public key ''B<sub>spend</sub>'' with an integer ''m'' in the following way:
 
 * Let ''B<sub>m</sub> = B<sub>spend</sub> + m·G''
 * Publish ''(B<sub>scan</sub>, B<sub>0</sub>)'', ''(B<sub>scan</sub>, B<sub>1</sub>) …''
