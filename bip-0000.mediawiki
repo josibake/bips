@@ -131,10 +131,10 @@ A silent payment address is constructed in the following manner:
 
 The sender and receiver MUST calculate an outpoint hash for the transaction in the following manner:
 
-* Collect each ''outpoint'' from the transaction, where an outpoint is the 36 byte little-endian, hexadecimal representation of the previous output transaction id and vout index
-* Sort the outpoints alphanumerically, in ascending order
+* Collect each ''outpoint'' from the transaction, where an outpoint is the `uint256` txid and `uint32` vout pair, which represents the previous transaction output being spent
+* Sort the outpoints by txid and vout, in ascending order
 * Let ''outpoints = outpoint<sub>0</sub> || outpoint<sub>1</sub> || … || outpoint<sub>n</sub>''
-* Let ''outpoint_hash = SHA256(outpoints), truncated to the first 8 bytes''<ref name="why_8byte_hash">'''How was an 8 byte hash chosen?''' Reference the birthday problem and numbers there, etc (TODO)</ref>
+* Let ''outpoint_hash = SHA256(outpoints), truncated to the first 16 bytes''<ref name="why_16byte_hash">'''How was a 16 byte hash chosen?''' Reference the birthday problem and numbers there, etc (TODO)</ref>
 
 === Sender ===
 
