@@ -117,19 +117,21 @@ In what follows, we use the notation from [https://github.com/bitcoin/bips/blob/
 
 A silent payment address is constructed in the following manner:
 
-* Let ''HRP = sp''
-* Let ''v = a single version byte, set to 0''
 * Let ''B<sub>scan</sub>, b<sub>scan</sub> = Recipient’s [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki BIP340] scan public key and corresponding private key''
 * Let ''B<sub>spend</sub>, b<sub>spend</sub> = Recipient’s [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki BIP340] spend public key and corresponding private key''
 * Let ''B<sub>m</sub> = B<sub>spend</sub> + m·G'', where ''m'' an optional integer tweak for labeling
 ** In the case of ''m'' = 0, no label is applied and ''B<sub>m</sub> = B<sub>spend</sub>''
-* The final address is a 66 byte address of the form ''HRP || v || B<sub>m</sub> || B<sub>scan</sub>''
+* The final address is a [https://github.com/bitcoin/bips/bip-0350.mediawkik Bech32m] encoding of:
+** The human-readable part "sp" for mainnet, and "tsp" for testnet
+** The data-part values:
+*** The character "q", to represent a silent payment address of version 0
+*** The 64 byte concatenation of the Recipient's public keys, ''B<sub>m</sub> || B<sub>scan</sub>''
 
 === Outpoint hash ===
 
 The sender and receiver MUST calculate an outpoint hash for the transaction in the following manner:
 
-* Collect each ''outpoint'' from the transaction, where an outpoint is the 36 byte little-endian representation of the previous output transaction id and vout index
+* Collect each ''outpoint'' from the transaction, where an outpoint is the 36 byte little-endian, hexadecimal representation of the previous output transaction id and vout index
 * Sort the outpoints alphanumerically, in ascending order
 * Let ''outpoints = outpoint<sub>0</sub> || outpoint<sub>1</sub> || … || outpoint<sub>n</sub>''
 * Let ''outpoint_hash = SHA256(outpoints), truncated to the first 8 bytes''<ref name="why_8byte_hash">'''How was an 8 byte hash chosen?''' Reference the birthday problem and numbers there, etc (TODO)</ref>
