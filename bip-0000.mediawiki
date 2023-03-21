@@ -119,8 +119,8 @@ A silent payment address is constructed in the following manner:
 
 * Let ''HRP = sp''
 * Let ''v = a single version byte, set to 0''
-* Let ''B<sub>scan</sub>, b<sub>scan</sub> = Recipient’s [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki BIP340] scan key pair''
-* Let ''B<sub>spend</sub>, b<sub>spend</sub> = Recipient’s [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki BIP340] spend key pair''
+* Let ''B<sub>scan</sub>, b<sub>scan</sub> = Recipient’s [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki BIP340] scan public key and corresponding private key''
+* Let ''B<sub>spend</sub>, b<sub>spend</sub> = Recipient’s [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki BIP340] spend public key and corresponding private key''
 * Let ''B<sub>m</sub> = B<sub>spend</sub> + m·G'', where ''m'' an optional integer tweak for labeling
 ** In the case of ''m'' = 0, no label is applied and ''B<sub>m</sub> = B<sub>spend</sub>''
 * The final address is a 66 byte address of the form ''HRP || v || B<sub>m</sub> || B<sub>scan</sub>''
