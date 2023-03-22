@@ -111,7 +111,13 @@ Alice performs the tweak same as before using one of the published ''(B<sub>scan
 
 == Specification ==
 
-In what follows, we use the notation from [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#specification BIP340].
+We use the following functions and conventions:
+
+* ser<sub>32</sub>(i): serialize a 32-bit unsigned integer i as a 4-byte sequence, most significant byte first
+
+For everything not defined above, we use the notation from [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#specification BIP340].
+
+
 
 === Address encoding ===
 
@@ -131,7 +137,7 @@ A silent payment address is constructed in the following manner:
 
 The sender and receiver MUST calculate an outpoint hash for the transaction in the following manner:
 
-* Collect each ''outpoint'' from the transaction, where an outpoint is the `uint256` txid and `uint32` vout pair, which represents the previous transaction output being spent
+* Collect each ''outpoint'' from the transaction, where an outpoint is the `uint256` txid and `uint32` vout pair representing the prevout being spent
 * Sort the outpoints by txid and vout, in ascending order
 * Let ''outpoints = outpoint<sub>0</sub> || outpoint<sub>1</sub> || … || outpoint<sub>n</sub>''
 * Let ''outpoint_hash = SHA256(outpoints), truncated to the first 16 bytes''<ref name="why_16byte_hash">'''How was a 16 byte hash chosen?''' Reference the birthday problem and numbers there, etc (TODO)</ref>
@@ -147,12 +153,10 @@ The sending wallet performs coin selection as usual with the added restriction t
 After the inputs have been selected, the sender creates the receiver's output(s) in the following manner:
 
 * Let ''a = a<sub>0</sub> + a<sub>1</sub> + … a<sub>i</sub>'', where each ''a<sub>i</sub>'' is the 256-bit private key corresponding to the ''ith'' input public key of the transaction
-* Compute the tweak:
-** Let ''t<sub>0</sub> = SHA256(SHA256(outpoint_hash·a·B<sub>scan</sub> || 0))''
-** Optionally, if more outputs are desired:
-*** Starting from ''n = 1''
-**** Let ''t<sub>n</sub> = SHA256(SHA256(outpoint_hash·a·B<sub>scan</sub> || n))''
-**** Repeat with ''n++ for each additional output''
+* Compute the tweak(s):
+** Starting from ''n = 0''
+*** Let ''t<sub>0</sub> = SHA256(SHA256(outpoint_hash·a·B<sub>scan</sub> || ser<sub>32</sub>(n)))''
+*** Optionally, repeat with n++ for each additional output
 * For each ''t<sub>n</sub>'':
 ** Let ''P<sub>mn</sub> = t<sub>n</sub>·G + B<sub>m</sub>''
 ** Encode ''P<sub>mn</sub>'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output<ref name="why_taproot">'''Why only taproot outputs?''' Providing too much optionality for the protocol makes it difficult to implement and can be at odds with the goal of providing the best privacy. Limiting to taproot outputs helps simplify the implementation significantly while also putting users in the best anonymity set going forward. TODO: Would be nice to add some links here regarding not bifurcating address space and the goals of taproot to be the largest anonymity set for bitcoin.</ref>
