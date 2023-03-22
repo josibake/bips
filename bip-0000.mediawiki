@@ -139,8 +139,8 @@ The sender and receiver MUST calculate an outpoint hash for the transaction in t
 
 * Collect each ''outpoint'' from the transaction, where an outpoint is the `uint256` txid and `uint32` vout pair representing the prevout being spent
 * Sort the outpoints by txid and vout, in ascending order
-* Let ''outpoints = outpoint<sub>0</sub> || outpoint<sub>1</sub> || … || outpoint<sub>n</sub>''
-* Let ''outpoint_hash = SHA256(outpoints), truncated to the first 16 bytes''<ref name="why_16byte_hash">'''How was a 16 byte hash chosen?''' Reference the birthday problem and numbers there, etc (TODO)</ref>
+* Let ''outpoints = txid<sub>0</sub> || ser<sub>32</sub>(vout<sub>0</sub>) || … || txid<sub>n</sub> || ser<sub>32</sub>(vout<sub>n</sub>)''
+* Let ''outpoint_hash = SHA256(outpoints), truncated to the first 16 bytes''<ref name="why_16byte_hash">'''How was a 16 byte hash chosen?''' In order to support light clients, we expect a full node to calculate ''outpoint_hash·A'', where ''A'' is the sum of the input public keys for a transaction. Using a 16 byte hash instead of a 32 byte will speed up the EC multiplication by ~2x, assuming an optimized implementation. This is in keeping with a server-client model, where we want to minimize the work done by the server. Conversly, we don't want the hash to be too small as this increases the risk of a collision when spending UTXOs from the same public key. Using a 16 byte hash means we can spend from the same public key 6.1×10<sup>6</sup> times with only a ''p = 10<sup>−6</sup>'' probability of a collision (see [https://en.wikipedia.org/wiki/Birthday_problem#Probability_table Birthday Problem] for more details)</ref>
 
 === Sender ===
 
