@@ -127,7 +127,7 @@ A silent payment address is constructed in the following manner:
 * Let ''B<sub>spend</sub>, b<sub>spend</sub> = Recipient’s [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki BIP340] spend public key and corresponding private key''
 * Let ''B<sub>m</sub> = B<sub>spend</sub> + m·G'', where ''m'' an optional integer tweak for labeling
 ** In the case of ''m'' = 0, no label is applied and ''B<sub>m</sub> = B<sub>spend</sub>''
-* The final address is a [https://github.com/bitcoin/bips/bip-0350.mediawkik Bech32m] encoding of:
+* The final address is a [https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki Bech32m] encoding of:
 ** The human-readable part "sp" for mainnet, and "tsp" for testnet
 ** The data-part values:
 *** The character "q", to represent a silent payment address of version 0
