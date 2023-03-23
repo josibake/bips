@@ -206,7 +206,7 @@ If using a seed phrase only style backup, the user can recover the wallet’s cu
 
 ===== Recovery from the UTXO set =====
 
-The wallet computes a tweak for every unspent transaction containing at least one unspent taproot output, where the unspent output was created after the wallet birthday.
+The wallet computes a tweak for every transaction containing at least one unspent taproot output, where the unspent output was created after the wallet birthday.
 
 ===== Recovering transaction history =====
 
