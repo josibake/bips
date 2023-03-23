@@ -165,7 +165,7 @@ After the inputs have been selected, the sender creates the receiver's output(s)
 
 ==== Key Derivation ====
 
-Two keys are needed to create a silent payments address: the spend key and the scan key. While these keys can be generated independently, wallet software SHOULD use BIP32 derivation<ref name="bip32_derivation">'''Why use BIP32 hardened derivation?''' Using BIP32 derivation allows users to add silent payments to an existing master seed. It also ensures that a users silent payment funds are recoverable in any wallet which supports BIP32 derivation. Using hardened derivation ensures that it is safe to export the scan private key without exposing the master key or spend private key</ref> to ensure compatibility across wallets.
+Two keys are needed to create a silent payments address: the spend key and the scan key. While these keys can be generated independently, wallet software SHOULD use BIP32 derivation<ref name="bip32_derivation">'''Why use BIP32 hardened derivation?''' Using BIP32 derivation allows users to add silent payments to an existing master seed. It also ensures that a user’s silent payment funds are recoverable in any wallet which supports BIP32 derivation. Using hardened derivation ensures that it is safe to export the scan private key without exposing the master key or spend private key</ref> to ensure compatibility across wallets.
 
 A scan and spend key pair using BIP32 derivation are defined in the following manner:
 
