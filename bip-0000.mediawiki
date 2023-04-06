@@ -44,7 +44,7 @@ We aim to present a transaction protocol which satisifies the following properti
 
 == Overview ==
 
-We first present an informal overview of the protocol followed by a full specification.
+We first present an informal overview of the protocol. In what follows, uppercase letters represent public keys, lowercase letters represent private keys and G represents the generator point for ''secp256k1''. Each section builds on the next and is meant to introduce and briefly explain an aspect of the protocol. For the full protocol specification, see [[Specification]].
 
 ''' Simple case '''
 
