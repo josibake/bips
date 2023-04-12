@@ -44,15 +44,16 @@ We aim to present a transaction protocol which satisifies the following properti
 
 == Overview ==
 
-We first present an informal overview of the protocol. In what follows, uppercase letters represent public keys, lowercase letters represent private keys and G represents the generator point for ''secp256k1''. Each section builds on the next and is meant to introduce and briefly explain an aspect of the protocol. For the full protocol specification, see [[bip-0000.mediawiki#specification|Specification]].
+We first present an informal overview of the protocol. In what follows, uppercase letters represent public keys, lowercase letters represent private keys, ''||'' refers to byte concatenation, and G represents the generator point for ''secp256k1''. Each section of the overview is incomplete on its own and is meant to build on the previous section in order to introduce and briefly explain each aspect of the protocol. For the full protocol specification, see [[bip-0000.mediawiki#specification|Specification]].
 
 ''' Simple case '''
 
-Bob wishes to receive payments from Alice, so he publishes his public key ''B'' as a silent payment address. Alice selects a UTXO with private key ''a'' and public key ''A'' from her wallet to fund the transaction and creates the output ''P'' for Bob in the following way:
+Bob wishes to receive payments using a static address so he publishes a public key ''B'' as a silent payment address. Alice discovers Bob's silent payment address, selects a UTXO with private key ''a'' and public key ''A'' to fund the transaction and creates a destination output ''P'' for Bob in the following way:
 
 * Let ''P = HASH(a·B)·G + B''
+* Encode ''P'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output
 
-Bob detects this payment by computing ''P = HASH(b·A)·G + B'', since ''a·B == b·A'' ([https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman Elliptic Curve Diffie-Hellman]).
+Since ''a·B == b·A'' ([https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman Elliptic Curve Diffie-Hellman]), Bob scans with his private key ''b'' by checking every transaction with at least one unspent taproot output until ''P'' is found (e.g calculating ''P = HASH(b·A)·G + B'' and seeing that ''P'' is present in the transaction outputs).
 
 ''' Creating more than one output '''
 
