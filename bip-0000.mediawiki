@@ -110,6 +110,8 @@ Alice performs the tweak same as before using one of the published ''(B<sub>scan
 * Compute ''P<sub>0m</sub> = P<sub>0</sub> + m·G'' for each ''m''
 * For each ''P<sub>0m</sub>'' in {''P<sub>00</sub> … P<sub>0m</sub>''}, check if any are present in the transaction outputs
 
+It is important to note that an outside observer can easily deduce that each published ''(B<sub>scan</sub>, B<sub>m</sub>)'' pair is owned by the same entity as the all have ''B<sub>scan</sub>'' in common. As such, labels are not meant as a way for Bob to manage separate identities, but rather a way for Bob to determine the source of an incoming payment.
+
 == Specification ==
 
 We use the following functions and conventions:
