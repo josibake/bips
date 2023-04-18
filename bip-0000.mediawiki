@@ -53,7 +53,7 @@ Bob wishes to receive payments using a static address so he publishes a public k
 * Let ''P = HASH(a·B)·G + B''
 * Encode ''P'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output
 
-Since ''a·B == b·A'' ([https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman Elliptic Curve Diffie-Hellman]), Bob scans with his private key ''b'' by checking every transaction with at least one unspent taproot output until ''P'' is found (e.g calculating ''P = HASH(b·A)·G + B'' and seeing that ''P'' is present in the transaction outputs).
+Since ''a·B == b·A'' ([https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman Elliptic Curve Diffie-Hellman]), Bob scans with his private key ''b'' by collecting the input public keys for each transaction with at least one unspent taproot output and performing the ECDH calculation until ''P'' is found (e.g calculating ''P = HASH(b·A)·G + B'' and seeing that ''P'' is present in the transaction outputs).
 
 ''' Creating more than one output '''
 
