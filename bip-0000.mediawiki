@@ -110,13 +110,18 @@ Alice performs the tweak same as before using one of the published ''(B<sub>scan
 * Compute ''P<sub>0m</sub> = P<sub>0</sub> + m·G'' for each ''m''
 * For each ''P<sub>0m</sub>'' in {''P<sub>00</sub> … P<sub>0m</sub>''}, check if any are present in the transaction outputs
 
-It is important to note that an outside observer can easily deduce that each published ''(B<sub>scan</sub>, B<sub>m</sub>)'' pair is owned by the same entity as the all have ''B<sub>scan</sub>'' in common. As such, labels are not meant as a way for Bob to manage separate identities, but rather a way for Bob to determine the source of an incoming payment.
+It is important to note that an outside observer can easily deduce that each published ''(B<sub>scan</sub>, B<sub>m</sub>)'' pair is owned by the same entity as each published address will have ''B<sub>scan</sub>'' in common. As such, labels are not meant as a way for Bob to manage separate identities, but rather a way for Bob to determine the source of an incoming payment.
 
 == Specification ==
 
 We use the following functions and conventions:
 
-* ser<sub>32</sub>(i): serialize a 32-bit unsigned integer i as a 4-byte sequence, most significant byte first
+* ser<sub>32</sub>(i): serializes a 32-bit unsigned integer i as a 4-byte sequence, most significant byte first
+* ecdh(x, P):
+** takes a 32-byte scalar ''x'' and public key ''P'' (either 33-byte compressed or 32-byte X-only format)
+** Let ''shared_secret = x·P'', formatted as a 33-byte compressed public key
+** return ''sha256(shared_secret)''
+
 
 For everything not defined above, we use the notation from [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#specification BIP340].
 
@@ -140,10 +145,10 @@ A silent payment address is constructed in the following manner:
 
 The sender and receiver MUST calculate an outpoint hash for the transaction in the following manner:
 
-* Collect each ''outpoint'' from the transaction, where an outpoint is the `uint256` txid and `uint32` vout pair representing the prevout being spent
+* Collect each ''outpoint'' used as an input to the transaction, where an outpoint is the `uint256` txid and `uint32` vout pair representing the prevout being spent
 * Sort the outpoints by txid and vout, in ascending order
 * Let ''outpoints = txid<sub>0</sub> || ser<sub>32</sub>(vout<sub>0</sub>) || … || txid<sub>n</sub> || ser<sub>32</sub>(vout<sub>n</sub>)''
-* Let ''outpoint_hash = SHA256(outpoints), truncated to the first 16 bytes''<ref name="why_16byte_hash">'''How was a 16 byte hash chosen?''' In order to support light clients, we expect a full node to calculate ''outpoint_hash·A'', where ''A'' is the sum of the input public keys for a transaction. Using a 16 byte hash instead of a 32 byte will speed up the EC multiplication by ~2x, assuming an optimized implementation. This is in keeping with a server-client model, where we want to minimize the work done by the server. Conversly, we don't want the hash to be too small as this increases the risk of a collision when spending UTXOs from the same public key. Using a 16 byte hash means we can spend from the same public key 6.1×10<sup>6</sup> times with only a ''p = 10<sup>−6</sup>'' probability of a collision (see [https://en.wikipedia.org/wiki/Birthday_problem#Probability_table Birthday Problem] for more details)</ref>
+* Let ''outpoint_hash = sha256(outpoints), truncated to the first 16 bytes''<ref name="why_16byte_hash">'''How was a 16 byte hash chosen?''' In order to support light clients, we expect a full node to calculate ''outpoint_hash·A'', where ''A'' is the sum of the input public keys for a transaction. Using a 16 byte hash instead of a 32 byte will speed up the EC multiplication by ~2x, assuming an optimized implementation. This is in keeping with a server-client model, where we want to minimize the work done by the server. Conversly, we don't want the hash to be too small as this increases the risk of a collision when spending UTXOs from the same public key. Using a 16 byte hash means we can spend from the same public key 6.1×10<sup>6</sup> times with only a ''p = 10<sup>−6</sup>'' probability of a collision (see [https://en.wikipedia.org/wiki/Birthday_problem#Probability_table Birthday Problem] for more details)</ref>
 
 === Sender ===
 
@@ -158,7 +163,7 @@ After the inputs have been selected, the sender creates the receiver's output(s)
 * Let ''a = a<sub>0</sub> + a<sub>1</sub> + … a<sub>i</sub>'', where each ''a<sub>i</sub>'' is the 256-bit private key corresponding to the ''ith'' input public key of the transaction
 * Compute the tweak(s):
 ** Starting from ''n = 0''
-*** Let ''t<sub>0</sub> = SHA256(SHA256(outpoint_hash·a·B<sub>scan</sub> || ser<sub>32</sub>(n)))''
+*** Let ''t<sub>0</sub> = sha256(ecdh(outpoint_hash·a, B<sub>scan</sub>) || ser<sub>32</sub>(n))''
 *** Optionally, repeat with n++ for each additional output
 * For each ''t<sub>n</sub>'':
 ** Let ''P<sub>mn</sub> = t<sub>n</sub>·G + B<sub>m</sub>''
@@ -185,7 +190,7 @@ For each transaction the receiving wallet suspects might be a silent payment to 
 * Let ''A = A<sub>0</sub> + A<sub>1</sub> + … A<sub>i</sub>'', where each ''A<sub>i</sub>'' is the public key corresponding to the ''ith'' input of the transaction
 * Compute the tweaks:
 ** Let ''M = the number of labels the Recipient wallet has used''
-** Let ''t<sub>0</sub> = SHA256(SHA256(outpoint_hash·b<sub>scan</sub>·A || 0))''
+** Let ''t<sub>0</sub> = sha256(ecdh(outpoint_hash·b<sub>scan</sub>, A) || 0)''
 ** Compute ''P<sub>00</sub> = t<sub>0</sub>·G + B<sub>spend</sub>''
 ** If ''M'' is greater than 0:
 *** Let ''m = 1'':
@@ -194,7 +199,7 @@ For each transaction the receiving wallet suspects might be a silent payment to 
 **** repeat with ''m++''
 ** For each public key ''P<sub>m0</sub>'' in {''P<sub>00</sub> … P<sub>M0</sub>''}:
 *** If ''P<sub>m0</sub>'' is detected in the transaction outputs, starting with ''n = 1'':
-**** Compute ''t<sub>n</sub> = SHA256(SHA256(outpoint_hash·b<sub>scan</sub>·A || n))''
+**** Compute ''t<sub>n</sub> = sha256(ecdh(outpoint_hash·b<sub>scan</sub>, A) || n)''
 **** Check if ''P<sub>mn</sub> = (t<sub>n</sub> + m)·G + B<sub>spend</sub>'' is present in the remaining outputs
 **** If not, terminate
 **** If ''P<sub>mn</sub>'' is found, repeat with ''n++''
