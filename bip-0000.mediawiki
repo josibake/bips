@@ -130,8 +130,8 @@ This document defines ''Silent Payments v0''. Version is communicated through th
 
 For ''Silent Payments v0'':
 
-* Recipient addresses are always [https://github.com/bitcoin/bips/blob/master/bip-0342.mediawiki BIP342] taproot outputs
-* Transactions must be signed with ''SIGHASH_ALL''
+* Recipient addresses are always [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot outputs<ref name="why_taproot">'''Why only taproot outputs?''' Providing too much optionality for the protocol makes it difficult to implement and can be at odds with the goal of providing the best privacy. Limiting to taproot outputs helps simplify the implementation significantly while also putting users in the best anonymity set going forward. TODO: Would be nice to add some links here regarding not bifurcating address space and the goals of taproot to be the largest anonymity set for bitcoin.</ref>
+* Transactions must be signed with ''SIGHASH_ALL''<ref name="why_sighash_all">'''Why only ''SIGHASH_ALL''?''' Since the output address for the receiver is derived from from the sum of the input public keys, the inputs and outputs cannot change once the sender has signed the transaction. If the inputs or outputs are allowed to change after the fact, the receiver will not be able to calculate the shared secret needed to find and spend the output. It is currently an open question on how a future version of silent payments could be made to work with ''SIGHASH_GROUP'' and ''SIGHASH_ANYPREVOUT''.</ref>
 * Inputs are limited to the following ''scriptPubKeys'':
 ** ''P2PKH''
 ** ''P2WPKH''
@@ -179,7 +179,7 @@ After the inputs have been selected, the sender creates the receiver's output(s)
 *** Optionally, repeat with n++ for each additional output
 * For each ''t<sub>n</sub>'':
 ** Let ''P<sub>mn</sub> = t<sub>n</sub>·G + B<sub>m</sub>''
-** Encode ''P<sub>mn</sub>'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output<ref name="why_taproot">'''Why only taproot outputs?''' Providing too much optionality for the protocol makes it difficult to implement and can be at odds with the goal of providing the best privacy. Limiting to taproot outputs helps simplify the implementation significantly while also putting users in the best anonymity set going forward. TODO: Would be nice to add some links here regarding not bifurcating address space and the goals of taproot to be the largest anonymity set for bitcoin.</ref>
+** Encode ''P<sub>mn</sub>'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output
 
 === Receiver ===
 
