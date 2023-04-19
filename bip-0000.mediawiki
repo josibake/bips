@@ -122,10 +122,22 @@ We use the following functions and conventions:
 ** Let ''shared_secret = x·P'', formatted as a 33-byte compressed public key
 ** return ''sha256(shared_secret)''
 
-
 For everything not defined above, we use the notation from [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#specification BIP340].
 
+=== Versions ===
 
+This document defines ''Silent Payments v0''. Version is communicated through the address in the same way as Segwit addresses. Future upgrades to silent payments will require a new version.
+
+For ''Silent Payments v0'':
+
+* Recipient addresses are always [https://github.com/bitcoin/bips/blob/master/bip-0342.mediawiki BIP342] taproot outputs
+* Transactions must be signed with ''SIGHASH_ALL''
+* Inputs are limited to the following ''scriptPubKeys'':
+** ''P2PKH''
+** ''P2WPKH''
+** ''P2TR (keypath spends)''
+** ''P2SH-P2WPKH''
+** Custom scripts using miniscript descriptors
 
 === Address encoding ===
 
