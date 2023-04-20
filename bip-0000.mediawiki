@@ -126,9 +126,7 @@ For everything not defined above, we use the notation from [https://github.com/b
 
 === Versions ===
 
-This document defines ''Silent Payments v0''. Version is communicated through the address in the same way as Segwit addresses. Future upgrades to silent payments will require a new version.
-
-For ''Silent Payments v0'':
+This document defines ''Silent Payments v0''. Version is communicated through the address in the same way as Segwit addresses. Future upgrades to silent payments will require a new version. For ''Silent Payments v0'':
 
 * Recipient addresses are always [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot outputs<ref name="why_taproot">'''Why only taproot outputs?''' Providing too much optionality for the protocol makes it difficult to implement and can be at odds with the goal of providing the best privacy. Limiting to taproot outputs helps simplify the implementation significantly while also putting users in the best anonymity set going forward. TODO: Would be nice to add some links here regarding not bifurcating address space and the goals of taproot to be the largest anonymity set for bitcoin.</ref>
 * Transactions must be signed with ''SIGHASH_ALL''<ref name="why_sighash_all">'''Why only ''SIGHASH_ALL''?''' Since the output address for the receiver is derived from from the sum of the input public keys, the inputs and outputs cannot change once the sender has signed the transaction. If the inputs or outputs are allowed to change after the fact, the receiver will not be able to calculate the shared secret needed to find and spend the output. It is currently an open question on how a future version of silent payments could be made to work with ''SIGHASH_GROUP'' and ''SIGHASH_ANYPREVOUT''.</ref>
@@ -212,10 +210,10 @@ For wallets which support labels, the wallet SHOULD precompute ''1·G, 2·G, ...
 ** Starting with ''n = 0'':
 *** Let ''t<sub>n</sub> = sha256(shared_secret || n)''
 *** Compute ''P<sub>n</sub> = t<sub>n</sub>·G + B<sub>spend</sub>''
-**** If ''P<sub>n</sub>'' is found, add it to the wallet, remove it from ''outputs_to_check'', and continue with ''n++''
+**** If ''P<sub>n</sub>'' is in ''outputs_to_check'', add it to the wallet, remove it from ''outputs_to_check'', and continue with ''n++''
 **** If ''P<sub>n</sub>'' is not found and the wallet has precomputed labels:
 ***** For each output in ''outputs_to_check'', check if ''output - P<sub>n</sub>'' exists in the list of labels used by the wallet
-***** If a match is found, add the output (''P<sub>n</sub> + m·G'') to the wallet, remove it from ''outputs_to_check'', and continue with ''n++''
+***** If a match is found, add the output (''P<sub>n</sub> + m·G'') to the wallet, remove the output from ''outputs_to_check'', and continue with ''n++''
 **** If no matches are found, stop
 
 ==== Backup and Recovery ====
