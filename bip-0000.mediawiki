@@ -170,16 +170,20 @@ The sending wallet performs coin selection as usual with the added restriction t
 
 ==== Creating outputs ====
 
-After the inputs have been selected, the sender creates the receiver's output(s) in the following manner:
+After the inputs have been selected, the sender can create one or more outputs for one or more silent payment addresses in the following manner:
 
 * Let ''a = a<sub>0</sub> + a<sub>1</sub> + … a<sub>i</sub>'', where each ''a<sub>i</sub>'' is the 256-bit private key corresponding to the ''ith'' input public key of the transaction
-* Compute the tweak(s):
-** Starting from ''n = 0''
-*** Let ''t<sub>0</sub> = sha256(ecdh(outpoint_hash·a, B<sub>scan</sub>) || ser<sub>32</sub>(n))''
-*** Optionally, repeat with n++ for each additional output
-* For each ''t<sub>n</sub>'':
-** Let ''P<sub>mn</sub> = t<sub>n</sub>·G + B<sub>m</sub>''
-** Encode ''P<sub>mn</sub>'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output
+* Group receiver silent payment addresses by ''B<sub>scan</sub>'' (e.g each group consists of one ''B<sub>scan</sub>'' and one or more ''B<sub>m</sub>'')
+* For each group:
+** Let ''n = 0''
+** For each ''B<sub>m</sub>'' in the group:
+*** Let ''t<sub>n</sub> = sha256(ecdh(outpoint_hash·a, B<sub>scan</sub>) || ser<sub>32</sub>(n))''
+*** Let ''P<sub>mn</sub> = t<sub>n</sub>·G + B<sub>m</sub>''
+*** Encode ''P<sub>mn</sub>'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output
+*** Optionally, repeat with n++ to create additional outputs for the current ''B<sub>m</sub>''
+*** If no additional outputs are required, continue to the next ''B<sub>m</sub>'' with ''n++''
+
+The sender should check to ensure that no two outputs in the final transaction have the same ''t<sub>n</sub>'' as this could result in a loss of privacy for the receiver<ref name="why_not_the_same_tn">''' Why can't two outputs have the same ''t<sub>n</sub>''?''' If paying the same entity but to two separate labeled addresses in the same transaction without incrementing ''n'', the two outputs would be ''t<sub>n</sub>·G + B<sub>spend</sub> + i·G'' and ''t<sub>n</sub>·G + B<sub>spend</sub> + j·G''. The attacker could brute force by subtracting different values for ''i·G'' and ''j·G'' until they find that both outputs have ''t<sub>n</sub>·G + B<sub>spend</sub>'' in common. This would allow them to deduce that this transaction is a silent payment transaction and that a single entity received two outputs, paid to two separate silent payment addresses. This does not allow the attacker to determine either of the silent payment addresses</ref>.
 
 === Receiver ===
 
@@ -198,11 +202,11 @@ Each value of ''k'' represents a pair of private keys needed for creating a sile
 
 For each transaction the receiving wallet suspects might be a silent payment to themselves, it must<ref name="data_needed_for_scanning>'''What data does a wallet need for scanning''' A wallet needs a 32 byte public key which represents the sum of the input public keys of a transaction, the truncated 16 byte hash of the transaction input outpoints, and some method of determining whether or not a scriptPubKey exists in a block. For full nodes, all of this data is already available. For light clients, they would need to request the tweak data from a server with access to the necessary information for tweaking and determine existence in a block using something like BIP158. BIP158 is recommended over other methods as this is the most trust minimized, privacy preserving method for light clients today.</ref>:
 
-For wallets which support labels, the wallet SHOULD precompute ''1·G, 2·G ..., M·G'', where ''M'' is the max number of labels the wallet has issued. This enables a faster method for scanning assuming that the number of labels being checked is greater than the number of outputs in a transaction. For each transaction the receiving wallet suspects might be a silent payment to themselves, it must:
+For wallets which support labels, the wallet SHOULD precompute ''1·G, 2·G, ... , M·G'' where ''M'' is the max number of labels the wallet has issued. This enables a faster method for scanning assuming that the number of labels being checked is greater than the number of outputs in a transaction. For each transaction the receiving wallet suspects might be a silent payment to themselves, it must:
 
 * Generate the ''outpoint_hash'', using the method described above
 * Let ''A = A<sub>0</sub> + A<sub>1</sub> + … A<sub>i</sub>'', where each ''A<sub>i</sub>'' is the public key corresponding to the ''ith'' input of the transaction
-* Compute the tweaks:
+* Check for outputs:
 ** Let ''shared_secret = ecdh(outpoint_hash·b<sub>scan</sub>, A)''
 ** Let ''outputs_to_check = all unspent taproot outputs''
 ** Starting with ''n = 0'':
@@ -210,7 +214,7 @@ For wallets which support labels, the wallet SHOULD precompute ''1·G, 2·G ...,
 *** Compute ''P<sub>n</sub> = t<sub>n</sub>·G + B<sub>spend</sub>''
 **** If ''P<sub>n</sub>'' is found, add it to the wallet, remove it from ''outputs_to_check'', and continue with ''n++''
 **** If ''P<sub>n</sub>'' is not found and the wallet has precomputed labels:
-***** For each output, check if ''output - P<sub>n</sub>'' exists in the list of labels used by the wallet
+***** For each output in ''outputs_to_check'', check if ''output - P<sub>n</sub>'' exists in the list of labels used by the wallet
 ***** If a match is found, add the output (''P<sub>n</sub> + m·G'') to the wallet, remove it from ''outputs_to_check'', and continue with ''n++''
 **** If no matches are found, stop
 
