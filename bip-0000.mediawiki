@@ -160,6 +160,40 @@ The sender and receiver MUST calculate an outpoint hash for the transaction in t
 * Let ''outpoints = txid<sub>0</sub> || ser<sub>32</sub>(vout<sub>0</sub>) || … || txid<sub>n</sub> || ser<sub>32</sub>(vout<sub>n</sub>)''
 * Let ''outpoint_hash = sha256(outpoints), truncated to the first 16 bytes''<ref name="why_16byte_hash">'''How was a 16 byte hash chosen?''' In order to support light clients, we expect a full node to calculate ''outpoint_hash·A'', where ''A'' is the sum of the input public keys for a transaction. Using a 16 byte hash instead of a 32 byte will speed up the EC multiplication by ~2x, assuming an optimized implementation. This is in keeping with a server-client model, where we want to minimize the work done by the server. Conversly, we don't want the hash to be too small as this increases the risk of a collision when spending UTXOs from the same public key. Using a 16 byte hash means we can spend from the same public key 6.1×10<sup>6</sup> times with only a ''p = 10<sup>−6</sup>'' probability of a collision (see [https://en.wikipedia.org/wiki/Birthday_problem#Probability_table Birthday Problem] for more details)</ref>
 
+=== Identifying Public Keys ===
+
+While there are no restrictions on which UTXOs can be used to fund a transaction, the sender and reciever must arrive at the same set of public keys to use for deriving the shared secret. Additionally, at least one input must be from the set of inputs supported for ''Silent Payments v0''.
+
+==== Basic Inputs ====
+
+For the basic input types, the public keys can be found in the ''scriptPubKey'', ''scriptSig'', or ''witnessData'' fields:
+
+{| class="wikitable" style="margin:auto; white-space: nowrap;"
+|-
+!Output !! scriptPubKey !! scriptSig !! Witness Data
+|-
+!P2PK || <code><Public Key> OP_CHECKSIG</code> || - || -
+|-
+!P2MS || <code>OP_k <Public Key1> ... OP_n OP_CHECKMULTISIG</code> || <code> OP_0 <Signature1> ...</code> || -
+|-
+!P2SH-P2MS || - || <code> OP_0 <Signature1> ...</code> <code>OP_k<br/><Public Key1> ... OP_n OP_CHECKMULTISIG</code> || -
+|-
+!P2PKH || - || <code><Signature> <Public Key></code> || -
+|-
+!P2SH-P2WPKH || - || - || <code><Signature> <Public Key></code>
+|-
+!P2WPKH || - || - || <code><Signature> <Public Key></code>
+|-
+!P2TR (Keypath spend) || <code>OP_1 <Public Key></code> || - || -
+|-
+|}
+
+==== Complex Scripts ====
+
+''P2SH'', ''P2WSH'', and ''P2TR (Scriptpath spend)''s can also be used but under the following conditions:
+
+* The script contains a public key and corresponding signature
+* The script is valid miniscript<ref name="why_miniscript">'''Why require miniscript for complex scripts?''' Limiting to miniscript ensures that both the sender and receiver can arrive at the same conclusion as to which public keys were signed for in a script. This could also be accomplished by parsing Bitcoin Script for <code>OP_CHECKSIG</code> codes, but considering this largely overlaps with the miniscript usecase, it makes more sense to reuse miniscript for this purpose</ref>.
 === Sender ===
 
 ==== Selecting inputs ====
