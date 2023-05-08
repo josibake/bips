@@ -50,22 +50,22 @@ We first present an informal overview of the protocol. In what follows, uppercas
 
 Bob wishes to receive payments using a static address so he publishes a public key ''B'' as a silent payment address. Alice discovers Bob's silent payment address, selects a UTXO with private key ''a'' and public key ''A'' to fund the transaction and creates a destination output ''P'' for Bob in the following way:
 
-* Let ''P = HASH(a·B)·G + B''
+* Let ''P = hash(a·B)·G + B''
 * Encode ''P'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output
 
-Since ''a·B == b·A'' ([https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman Elliptic Curve Diffie-Hellman]), Bob scans with his private key ''b'' by collecting the input public keys for each transaction with at least one unspent taproot output and performing the ECDH calculation until ''P'' is found (e.g calculating ''P = HASH(b·A)·G + B'' and seeing that ''P'' is present in the transaction outputs).
+Since ''a·B == b·A'' ([https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman Elliptic Curve Diffie-Hellman]), Bob scans with his private key ''b'' by collecting the input public keys for each transaction with at least one unspent taproot output and performing the ECDH calculation until ''P'' is found (e.g calculating ''P = hash(b·A)·G + B'' and seeing that ''P'' is present in the transaction outputs).
 
 ''' Creating more than one output '''
 
 In the event Alice needs more than one output for Bob<ref name="why_more_than_one_output">'''Why allow for more than one output?''' Allowing Alice to break her payment to Bob into multiple amounts opens up a number of privacy improving techniques for Alice, such as making the transaction look like a CoinJoin or better hiding the change amount by splitting both the payment and change outputs into multiple amounts. It also allows for Alice and Carol to both have their own unique output paying Bob in the event they are in a collaborative transaction and both paying Bob's silent payment address.</ref>, she can do so in the following manner:
 
-* Let ''P<sub>0</sub> = HASH(a·B || 0)·G + B''
+* Let ''P<sub>0</sub> = hash(a·B || 0)·G + B''
 * For additional outputs:
-** Let ''P<sub>i</sub> = HASH(a·B || n)·G + B'', where ''n'' starts from 1 and is incremented for each subsequent output
+** Let ''P<sub>i</sub> = hash(a·B || n)·G + B'', where ''n'' starts from 1 and is incremented for each subsequent output
 
-Bob detects this output the same as before by searching for ''P<sub>0</sub> = HASH(b·A || 0)·G + B''. Once he detects the first output, he must:
+Bob detects this output the same as before by searching for ''P<sub>0</sub> = hash(b·A || 0)·G + B''. Once he detects the first output, he must:
 
-* Check for ''P<sub>1</sub> = HASH(b·A || 1)·G + B''
+* Check for ''P<sub>1</sub> = hash(b·A || 1)·G + B''
 * If ''P<sub>1</sub>'' is not found, stop
 * If ''P<sub>1</sub>'' is found, continue to check for ''P<sub>2</sub>'' and so on until an additional output is not found
 
@@ -75,8 +75,8 @@ Since Bob will only perform these subsquent checks after a transaction with at l
 
 If Alice were to use a different UTXO from the same public key ''A'' for a subsequent payment to Bob, she would end up deriving the same destination ''P''. To prevent this, Alice should include a hash of the outpoint in the following manner:
 
-* Let ''outpoint_hash = HASH(txid || vout)''
-* Let ''P<sub>0</sub> = HASH(outpoint_hash·a·B || 0)·G + B''
+* Let ''outpoint_hash = hash(txid || vout)''
+* Let ''P<sub>0</sub> = hash(outpoint_hash·a·B || 0)·G + B''
 
 ''' Using all inputs '''
 
@@ -84,18 +84,18 @@ In our simplified example we have been referring to Alice’s transactions as ha
 
 Alice performs the tweak with the sum of her input private keys in the following manner:
 
-* Let ''outpoints_hash = HASH(txid<sub>1</sub> || vout<sub>1</sub> || … txid<sub>n</sub> || vout<sub>n</sub>)''
+* Let ''outpoints_hash = hash(txid<sub>1</sub> || vout<sub>1</sub> || … txid<sub>n</sub> || vout<sub>n</sub>)''
 * Let ''a = a<sub>0</sub> + a<sub>1</sub> … + a<sub>n</sub>''
 * Let ''A = A<sub>0</sub> + A<sub>1</sub> … + A<sub>n</sub>''
-* Let ''P<sub>0</sub> = HASH(outpoints_hash·a·B || 0)·G + B''
+* Let ''P<sub>0</sub> = hash(outpoints_hash·a·B || 0)·G + B''
 
 ''' Spend and Scan Key '''
 
 Since Bob needs his private key ''b'' to check for incoming payments, this requires ''b'' to be exposed to an online device. To minimize the risks involved, Bob can instead publish an address of the form ''(B<sub>scan</sub>, B<sub>spend</sub>)''. This allows Bob to keep ''b<sub>spend</sub>'' in offline cold storage and perform the scanning with the public key ''B<sub>spend</sub>'' and private key ''b<sub>scan</sub>''. Alice performs the tweak using both of Bob’s public keys in the following manner:
 
-* Let ''P<sub>0</sub> = HASH(outpoints_hash·a·B<sub>scan</sub> || 0)·G + B<sub>spend</sub>''
+* Let ''P<sub>0</sub> = hash(outpoints_hash·a·B<sub>scan</sub> || 0)·G + B<sub>spend</sub>''
 
-Bob detects this payment by calculating ''P<sub>0</sub> = HASH(outpoints_hash·b<sub>scan</sub>·A)·G + B<sub>spend</sub>'' with his online device and can spend from his cold storage signing device using ''(HASH(outpoints_hash·b<sub>scan</sub>·A) + b<sub>spend</sub>) mod p'' as the private key.
+Bob detects this payment by calculating ''P<sub>0</sub> = hash(outpoints_hash·b<sub>scan</sub>·A)·G + B<sub>spend</sub>'' with his online device and can spend from his cold storage signing device using ''(hash(outpoints_hash·b<sub>scan</sub>·A) + b<sub>spend</sub>) mod p'' as the private key.
 
 ''' Labels '''
 
@@ -106,9 +106,8 @@ For a single silent payment address of the form ''(B<sub>scan</sub>, B<sub>spend
 
 Alice performs the tweak same as before using one of the published ''(B<sub>scan</sub>, B<sub>m</sub>)'' pairs. Bob detects the labeled payment in the following manner:
 
-* Let ''P<sub>0</sub> = HASH(outpoints_hash·b<sub>scan</sub>·A || 0)·G + B<sub>spend</sub>''
-* Compute ''P<sub>0m</sub> = P<sub>0</sub> + m·G'' for each ''m''
-* For each ''P<sub>0m</sub>'' in {''P<sub>00</sub> … P<sub>0m</sub>''}, check if any are present in the transaction outputs
+* Let ''P<sub>0</sub> = hash(outpoints_hash·b<sub>scan</sub>·A || 0)·G + B<sub>spend</sub>''
+* Subtact ''P<sub>0</sub>'' from each of the transaction outputs and check if the remainder matches any of the labels (''1·G, 2·G ..'') that the wallet has previously used
 
 It is important to note that an outside observer can easily deduce that each published ''(B<sub>scan</sub>, B<sub>m</sub>)'' pair is owned by the same entity as each published address will have ''B<sub>scan</sub>'' in common. As such, labels are not meant as a way for Bob to manage separate identities, but rather a way for Bob to determine the source of an incoming payment.
 
@@ -116,11 +115,7 @@ It is important to note that an outside observer can easily deduce that each pub
 
 We use the following functions and conventions:
 
-* ser<sub>32</sub>(i): serializes a 32-bit unsigned integer i as a 4-byte sequence, most significant byte first
-* ecdh(x, P):
-** takes a 32-byte scalar ''x'' and public key ''P'' (either 33-byte compressed or 32-byte X-only format)
-** Let ''shared_secret = x·P'', formatted as a 33-byte compressed public key
-** return ''sha256(shared_secret)''
+* ser<sub>32</sub>(i): serializes a 32-bit unsigned integer i as a 4-byte sequence, least significant byte first
 
 For everything not defined above, we use the notation from [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#specification BIP340].
 
@@ -130,12 +125,12 @@ This document defines ''Silent Payments v0''. Version is communicated through th
 
 * Recipient addresses are always [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot outputs<ref name="why_taproot">'''Why only taproot outputs?''' Providing too much optionality for the protocol makes it difficult to implement and can be at odds with the goal of providing the best privacy. Limiting to taproot outputs helps simplify the implementation significantly while also putting users in the best anonymity set going forward. TODO: Would be nice to add some links here regarding not bifurcating address space and the goals of taproot to be the largest anonymity set for bitcoin.</ref>
 * Transactions must be signed with ''SIGHASH_ALL''<ref name="why_sighash_all">'''Why only ''SIGHASH_ALL''?''' Since the output address for the receiver is derived from from the sum of the input public keys, the inputs and outputs cannot change once the sender has signed the transaction. If the inputs or outputs are allowed to change after the fact, the receiver will not be able to calculate the shared secret needed to find and spend the output. It is currently an open question on how a future version of silent payments could be made to work with ''SIGHASH_GROUP'' and ''SIGHASH_ANYPREVOUT''.</ref>
-* Inputs are limited to the following ''scriptPubKeys'':
+* Inputs used to derive the shared secret are limited to the following ''scriptPubKeys'':
 ** ''P2PKH''
 ** ''P2WPKH''
-** ''P2TR (keypath spends)''
+** ''P2TR''
 ** ''P2SH-P2WPKH''
-** Custom scripts using miniscript descriptors
+** 
 
 === Address encoding ===
 
@@ -194,6 +189,7 @@ For the basic input types, the public keys can be found in the ''scriptPubKey'',
 
 * The script contains a public key and corresponding signature
 * The script is valid miniscript<ref name="why_miniscript">'''Why require miniscript for complex scripts?''' Limiting to miniscript ensures that both the sender and receiver can arrive at the same conclusion as to which public keys were signed for in a script. This could also be accomplished by parsing Bitcoin Script for <code>OP_CHECKSIG</code> codes, but considering this largely overlaps with the miniscript usecase, it makes more sense to reuse miniscript for this purpose</ref>.
+
 === Sender ===
 
 ==== Selecting inputs ====
@@ -209,7 +205,7 @@ After the inputs have been selected, the sender can create one or more outputs f
 * For each group:
 ** Let ''n = 0''
 ** For each ''B<sub>m</sub>'' in the group:
-*** Let ''t<sub>n</sub> = sha256(ecdh(outpoint_hash·a, B<sub>scan</sub>) || ser<sub>32</sub>(n))''
+*** Let ''t<sub>n</sub> = sha256(outpoint_hash·a·B<sub>scan</sub>) || ser<sub>32</sub>(n))''
 *** Let ''P<sub>mn</sub> = t<sub>n</sub>·G + B<sub>m</sub>''
 *** Encode ''P<sub>mn</sub>'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output
 *** Optionally, repeat with n++ to create additional outputs for the current ''B<sub>m</sub>''
@@ -239,15 +235,15 @@ For wallets which support labels, the wallet SHOULD precompute ''1·G, 2·G, ...
 * Generate the ''outpoint_hash'', using the method described above
 * Let ''A = A<sub>0</sub> + A<sub>1</sub> + … A<sub>i</sub>'', where each ''A<sub>i</sub>'' is the public key corresponding to the ''ith'' input of the transaction
 * Check for outputs:
-** Let ''shared_secret = ecdh(outpoint_hash·b<sub>scan</sub>, A)''
-** Let ''outputs_to_check = all unspent taproot outputs''
+** Let ''shared_secret = outpoint_hash·b<sub>scan</sub>·A''
+** Let ''outputs_to_check = all unspent taproot outputs in the transaction''
 ** Starting with ''n = 0'':
 *** Let ''t<sub>n</sub> = sha256(shared_secret || n)''
 *** Compute ''P<sub>n</sub> = t<sub>n</sub>·G + B<sub>spend</sub>''
-**** If ''P<sub>n</sub>'' is in ''outputs_to_check'', add it to the wallet, remove it from ''outputs_to_check'', and continue with ''n++''
+**** If ''P<sub>n</sub>'' is in ''outputs_to_check'', add it to the wallet and continue with ''n++''
 **** If ''P<sub>n</sub>'' is not found and the wallet has precomputed labels:
 ***** For each output in ''outputs_to_check'', check if ''output - P<sub>n</sub>'' exists in the list of labels used by the wallet
-***** If a match is found, add the output (''P<sub>n</sub> + m·G'') to the wallet, remove the output from ''outputs_to_check'', and continue with ''n++''
+***** If a match is found, add the output (''P<sub>n</sub> + m·G'') to the wallet and continue with ''n++''
 **** If no matches are found, stop
 
 ==== Backup and Recovery ====
