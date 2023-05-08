@@ -69,7 +69,7 @@ Bob detects this output the same as before by searching for ''P<sub>0</sub> = ha
 * If ''P<sub>1</sub>'' is not found, stop
 * If ''P<sub>1</sub>'' is found, continue to check for ''P<sub>2</sub>'' and so on until an additional output is not found
 
-Since Bob will only perform these subsquent checks after a transaction with at least one output paying him is found, the increase to his overall scanning requirement is negligible.
+Since Bob will only perform these subsequent checks after a transaction with at least one output paying him is found, the increase to his overall scanning requirement is negligible.
 
 ''' Preventing address reuse '''
 
