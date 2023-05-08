@@ -104,7 +104,7 @@ For a single silent payment address of the form ''(B<sub>scan</sub>, B<sub>spend
 * Let ''B<sub>m</sub> = B<sub>spend</sub> + m·G''
 * Publish ''(B<sub>scan</sub>, B<sub>0</sub>)'', ''(B<sub>scan</sub>, B<sub>1</sub>) …''
 
-Alice performs the tweak same as before using one of the published ''(B<sub>scan</sub>, B<sub>m</sub>)'' pairs. Bob detects the labeled payment in the following manner:
+Alice performs the tweak as before using one of the published ''(B<sub>scan</sub>, B<sub>m</sub>)'' pairs. Bob detects the labeled payment in the following manner:
 
 * Let ''P<sub>0</sub> = hash(outpoints_hash·b<sub>scan</sub>·A || 0)·G + B<sub>spend</sub>''
 * Subtact ''P<sub>0</sub>'' from each of the transaction outputs and check if the remainder matches any of the labels (''1·G, 2·G ..'') that the wallet has previously used
@@ -132,6 +132,11 @@ This document defines ''Silent Payments v0''. Version is communicated through th
 ** ''P2SH-P2WPKH''
 ** 
 
+A transaction is not a ''Silent Payments v0'' transaction and should be skipped entirely<ref name="why_skip_transactions">'''Why skip transactions with unknown script fragments?''' Skipping transactions with unknown elements allows us to have a clean upgrade path for Silent Payments by avoiding the need to scan the same transaction multiple times with different rule sets. If a fancy new output type is added in the future Silent Payments v1 is released with support, we would want to avoid having to first scan the transaction with the silent payment v0 rules and then again with the silent payment v1 rules.</ref> when scanning if any of the following are true:
+
+* The transaction is signed with an unknown ''SIGHASH'' flag
+* The transaction inputs cointain script fragments which are not one of ''Segwit v0'', ''Segwit v1'', or ''TapLeaf version 0''
+
 === Address encoding ===
 
 A silent payment address is constructed in the following manner:
@@ -141,7 +146,7 @@ A silent payment address is constructed in the following manner:
 * Let ''B<sub>m</sub> = B<sub>spend</sub> + m·G'', where ''m'' an optional integer tweak for labeling
 ** In the case of ''m'' = 0, no label is applied and ''B<sub>m</sub> = B<sub>spend</sub>''
 * The final address is a [https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki Bech32m] encoding of:
-** The human-readable part "sp" for mainnet, and "tsp" for testnet
+** The human-readable part "sp" for mainnet, "tsp" for testnet and signet, and "sprt" for regtest
 ** The data-part values:
 *** The character "q", to represent a silent payment address of version 0
 *** The 64 byte concatenation of the Recipient's public keys, ''B<sub>m</sub> || B<sub>scan</sub>''
