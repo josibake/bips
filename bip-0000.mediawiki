@@ -168,7 +168,9 @@ While any UTXO can be used to fund the transaction, the sender and receiver must
 
 ''' P2TR '''
 
-The sender always performs the tweak with the `internal_key` secret ''d + hash(P||S)'', regardless of whether the keypath spend or scriptpath spend is being used. If the sender does not have access to the `internal_key` secret (including instances where the output public key is a provably unspendable NUMS point), they MUST not include the P2TR UTXO. The receiver always uses the outer public key when scanning, regardless of whether the taproot output is a keypath spend or a script path spend. This is to address a CoinJoin malleability issue<ref name="why_always_outer_pubkey">''' Why not just skip Taproot script path spends? ''' If the silent payments protocol skipped taproot script path spends, this would allow an attacker to join a coin join, participate in deriving the silent payment address using the `internal_key` secret and then broadcasting their own version of the transaction using the script path spend instead. The receiver would skip the attacker's taproot input and not be able to find the funds.</ref>
+The sender always performs the tweak with the ''internal_key'' secret ''d + hash(P||S)'', regardless of whether the keypath spend or scriptpath spend is being used. If the sender does not have access to the ''internal_key'' secret (including instances where the output public key is a provably unspendable NUMS point), they MUST not include the P2TR UTXO.
+
+The receiver always uses the outer public key when scanning, regardless of whether the taproot output is a keypath spend or a script path spend. This is to address a CoinJoin malleability issue<ref name="why_always_outer_pubkey">''' Why not just skip Taproot script path spends? ''' If the silent payments protocol skipped taproot script path spends, this would allow an attacker to join a coin join, participate in deriving the silent payment address using the ''internal_key'' secret and then broadcasting their own version of the transaction using the script path spend instead. The receiver would skip the attacker's taproot input and not be able to find the funds.</ref>
 
 ''' P2WPKH '''
 
@@ -186,7 +188,9 @@ The P2MS script must be in the standard template:
     scriptScript: OP_0 <Signature1> ... OP_k <Public Key1> ... OP_n OP_CHECKMULTISIG
 
 
-The sender performs the tweak using the private key(s) of only the public keys that will be signed for. The receiver uses only the public keys with corresponding signatures when scanning. These inputs are not safe to use in a CoinJoin, as a malicious participant can always malleate the `scriptSig` after the CoinJoin is broadcast by signing for a different sub-set of public keys than the ones used to create the silent payment address.
+The sender performs the tweak using the private key(s) of only the public keys that will be signed for. The receiver uses only the public keys with corresponding signatures when scanning.
+
+These inputs are not safe to use in a CoinJoin, as a malicious participant can malleate the ''scriptSig'' by signing for a different sub-set of public keys than the ones used to create the silent payment address and broadcasting the mallicious transaction.
 
 ''' P2PKH '''
 
