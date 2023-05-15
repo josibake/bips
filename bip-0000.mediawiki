@@ -107,9 +107,22 @@ For a single silent payment address of the form ''(B<sub>scan</sub>, B<sub>spend
 Alice performs the tweak as before using one of the published ''(B<sub>scan</sub>, B<sub>m</sub>)'' pairs. Bob detects the labeled payment in the following manner:
 
 * Let ''P<sub>0</sub> = hash(outpoints_hash·b<sub>scan</sub>·A || 0)·G + B<sub>spend</sub>''
-* Subtact ''P<sub>0</sub>'' from each of the transaction outputs and check if the remainder matches any of the labels (''1·G, 2·G ..'') that the wallet has previously used
+* Subtract ''P<sub>0</sub>'' from each of the transaction outputs and check if the remainder matches any of the labels (''1·G, 2·G ..'') that the wallet has previously used
 
 It is important to note that an outside observer can easily deduce that each published ''(B<sub>scan</sub>, B<sub>m</sub>)'' pair is owned by the same entity as each published address will have ''B<sub>scan</sub>'' in common. As such, labels are not meant as a way for Bob to manage separate identities, but rather a way for Bob to determine the source of an incoming payment.
+
+''' Labels for change '''
+
+For simplicity, Bob can also use labels for managing his own change outputs. To do so, he can reserver a special label in the following manner:
+
+* Let ''B<sub>change</sub> = B<sub>spend</sub> + hash(b<sub>scan</sub>)·G
+
+Now, whenever Bob is spending (to a silent payment address or otherwise), he can create a change output for himself using the silent payments protocol and his change label in the folling manner:
+
+* Let ''a = a<sub>0</sub> + a<sub>1</sub> … + a<sub>n</sub>'' represent the private keys of the inputs Bob is using to fund the transaction
+* Let ''P<sub>change</sub> = hash(outpoints_hash·a·B<sub>change</sub> || 0)·G + B<sub>spend</sub>''
+
+This gives Bob an alternative to using BIP32 for managing change, while still allowing him to know which of his unspent outputs were change when recovering his wallet from the master key.
 
 == Specification ==
 
