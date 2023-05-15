@@ -132,10 +132,12 @@ This document defines ''Silent Payments v0''. Version is communicated through th
 ** ''P2WPKH''
 ** ''P2TR''
 
+Throughout the rest of this document, these inputs will be referred to as ''Silent Payment Inputs''.
+
 A transaction is not a ''Silent Payments v0'' transaction and should be skipped entirely<ref name="why_skip_transactions">'''Why skip transactions with unknown script fragments?''' Skipping transactions with unknown elements allows us to have a clean upgrade path for Silent Payments by avoiding the need to scan the same transaction multiple times with different rule sets. If a fancy new output type is added in the future Silent Payments v1 is released with support, we would want to avoid having to first scan the transaction with the silent payment v0 rules and then again with the silent payment v1 rules.</ref> when scanning if any of the following are true:
 
 * The transaction does not contain any BIP341 taproot outputs
-* The transaction does not have at least one input from the ''Silent Payments v0'' allowlist
+* The transaction does not have at least one input from the ''Silent Payments Inputs'' list
 * The transaction is signed with ''SIGHASH_ANYONECANPAY'' or an unknown ''SIGHASH'' flag
 * Any of the transaction inputs cointain script fragments which are not one of legacy Bitcoin Script, ''Segwit v0'', or ''Segwit v1''
 
@@ -164,7 +166,7 @@ The sender and receiver MUST calculate an outpoint hash for the transaction in t
 
 === Identifying Public Keys ===
 
-While any UTXO can be used to fund the transaction, the sender and receiver must be able to agree on the subset of public keys used creating the shared secret. The rules for each input type are listed below.
+While any UTXO can be used to fund the transaction, the sender and receiver will only consider use ''Silent Payment Inputs'' when creating the output and scanning for silent payment outputs, using the rules defined below.
 
 ''' P2TR '''
 
@@ -206,7 +208,10 @@ The receiver obtains the public key from the ''scriptSig''. If the ''scriptSig''
 
 ==== Selecting inputs ====
 
-The sending wallet performs coin selection as usual with the added restriction that the sending wallet must be able to produce a signature for each UTXO. This excludes any UTXOs not requiring a signature for spending as these do not represent elliptic curve points. Given that these types of scripts are not widely used, no changes to coin selection will be required for the majority of wallets.<ref name="selecting_inputs">'''How to handle multisig and complex scripts''' TODO</ref>
+The sending wallet performs coin selection as usual with the following restrictions:
+
+* At least one input MUST be from the list of ''scriptPubKeys'' defined for ''Silent Payments v0''
+* Exclude ''P2TR'' inputs where the wallet cannot sign with the ''keypath'' private key
 
 ==== Creating outputs ====
 
