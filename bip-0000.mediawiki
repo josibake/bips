@@ -174,25 +174,29 @@ The sender always performs the tweak with the `internal_key` secret ''d + hash(P
 
 The sender performs the tweak as normal and the receiver obtains the public key from the ''witness''.
 
+''' P2SH-P2WPKH '''
+
+The sender performs the tweak as normal and the receiver obtains the public key from the ''redeemScript''.
+
 ''' P2(W)SH-P2MS '''
 
-Only P2(W)SH which P2MS are used. The P2MS script must be in the standard template:
+The P2MS script must be in the standard template:
 
-```
-scriptScript: OP_0 <Signature1> ... OP_k <Public Key1> ... OP_n OP_CHECKMULTISIG
-```
 
-The sender performs the tweak using the private key(s) of only the public keys that will be signed for. The receiver uses only the public keys with signatures when scanning. These inputs are not safe to use in a CoinJoin, as a malicious participant can always malleate the `scriptSig` after the CoinJoin is broadcast by signing for a different sub-set of public keys than the ones used to create the silent payment address.
+    scriptScript: OP_0 <Signature1> ... OP_k <Public Key1> ... OP_n OP_CHECKMULTISIG
+
+
+The sender performs the tweak using the private key(s) of only the public keys that will be signed for. The receiver uses only the public keys with corresponding signatures when scanning. These inputs are not safe to use in a CoinJoin, as a malicious participant can always malleate the `scriptSig` after the CoinJoin is broadcast by signing for a different sub-set of public keys than the ones used to create the silent payment address.
 
 ''' P2PKH '''
 
 The sender performs the tweak as normal and signs using the standard script template:
 
-```
-scriptSig: <Signature> <Public Key>
-```
 
-The receiver obtains the public key from the ''scriptSig''. If the ''scriptSig'' is anything besides two standard pushes, it is ignored by the receiver. These inputs are not to safe to use in a CoinJoin as a malicious participant can malleate the scriptSig after signing, making it impossible for the intended receiver to detect the payment.
+    scriptSig: <Signature> <Public Key>
+
+
+The receiver obtains the public key from the ''scriptSig''. If the ''scriptSig'' is anything besides two standard pushes, it is ignored by the receiver. ''P2PKH'' inputs are not to safe to use in a CoinJoin as a malicious participant can malleate the ''scriptSig'' after signing, making it impossible for the intended receiver to detect the payment.
 
 === Sender ===
 
