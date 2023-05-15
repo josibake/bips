@@ -124,7 +124,7 @@ For everything not defined above, we use the notation from [https://github.com/b
 This document defines ''Silent Payments v0''. Version is communicated through the address in the same way as Segwit addresses. Future upgrades to silent payments will require a new version. For ''Silent Payments v0'':
 
 * Recipient addresses are always [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot outputs<ref name="why_taproot">'''Why only taproot outputs?''' Providing too much optionality for the protocol makes it difficult to implement and can be at odds with the goal of providing the best privacy. Limiting to taproot outputs helps simplify the implementation significantly while also putting users in the best anonymity set going forward. TODO: Would be nice to add some links here regarding not bifurcating address space and the goals of taproot to be the largest anonymity set for bitcoin.</ref>
-* Transactions must be signed with one of the sighash flags ''ALL, SINGLE, NONE'' (''ANYONECANPAY'' is not supported. It is strongly recommended only ''SIGHASH_ALL'' be used for silent payments<ref name="why_sighash_all">'''Why only ''SIGHASH_ALL''?''' Since the output address for the receiver is derived from from the sum of the input public keys, the inputs and outputs cannot change once the sender has signed the transaction. If the inputs or outputs are allowed to change after the fact, the receiver will not be able to calculate the shared secret needed to find and spend the output. It is currently an open question on how a future version of silent payments could be made to work with ''SIGHASH_GROUP'' and ''SIGHASH_ANYPREVOUT''.</ref>
+* Transactions must be signed with one of the sighash flags ''ALL, SINGLE, NONE'' (''ANYONECANPAY'' is not supported). It is strongly recommended implementations only use ''SIGHASH_ALL'' for silent payments<ref name="why_sighash_all">'''Why only ''SIGHASH_ALL''?''' Since the output address for the receiver is derived from from the sum of the input public keys, the inputs and outputs cannot change once the sender has signed the transaction. If the inputs or outputs are allowed to change after the fact, the receiver will not be able to calculate the shared secret needed to find and spend the output. It is currently an open question on how a future version of silent payments could be made to work with ''SIGHASH_GROUP'' and ''SIGHASH_ANYPREVOUT''.</ref>
 * Inputs used to derive the shared secret are limited to the following ''scriptPubKeys'':
 ** ''P2PKH''
 ** ''P2(W)SH-P2MS''
@@ -134,8 +134,10 @@ This document defines ''Silent Payments v0''. Version is communicated through th
 
 A transaction is not a ''Silent Payments v0'' transaction and should be skipped entirely<ref name="why_skip_transactions">'''Why skip transactions with unknown script fragments?''' Skipping transactions with unknown elements allows us to have a clean upgrade path for Silent Payments by avoiding the need to scan the same transaction multiple times with different rule sets. If a fancy new output type is added in the future Silent Payments v1 is released with support, we would want to avoid having to first scan the transaction with the silent payment v0 rules and then again with the silent payment v1 rules.</ref> when scanning if any of the following are true:
 
-* The transaction is signed with an unknown ''SIGHASH'' flag
-* The transaction inputs cointain script fragments which are not one of ''Segwit v0'', ''Segwit v1'', or ''TapLeaf version 0''
+* The transaction does not contain any BIP341 taproot outputs
+* The transaction does not have at least one input from the ''Silent Payments v0'' allowlist
+* The transaction is signed with ''SIGHASH_ANYONECANPAY'' or an unknown ''SIGHASH'' flag
+* Any of the transaction inputs cointain script fragments which are not one of legacy Bitcoin Script, ''Segwit v0'', or ''Segwit v1''
 
 === Address encoding ===
 
