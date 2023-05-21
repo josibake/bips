@@ -260,7 +260,7 @@ For each transaction the receiving wallet suspects might be a silent payment to 
 * Check for outputs:
 ** Let ''outputs_to_check = all unspent taproot outputs in the transaction''
 ** Starting with ''n = 0'':
-*** Let ''t<sub>n</sub> = sha256(ecdh_shared_secret || n)''
+*** Let ''t<sub>n</sub> = sha256(ecdh_shared_secret || ser<sub>32</sub>(n))''
 *** Compute ''P<sub>n</sub> = t<sub>n</sub>·G + B<sub>spend</sub>''
 **** If ''P<sub>n</sub>'' is in ''outputs_to_check'', add it to the wallet and continue with ''n++''
 **** If ''P<sub>n</sub>'' is not found and the wallet has precomputed labels<ref name="precompute_labels">''' Why precompute labels?''' Naively, a wallet could some max integer ''M'' which indicates the total number of labels it has used. When checking a transaction, the wallet would need to add all possible labels to each output. This ends up being ''n·m'' additions, where ''n'' is the number of outputs in the transaction and ''m'' is the number of labels in the wallet</ref>:
