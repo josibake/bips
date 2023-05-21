@@ -203,7 +203,7 @@ The sender performs the tweak using the private key for the output and MUST sign
     scriptSig: <Signature> <Public Key>
 
 
-The receiver obtains the public key from the ''scriptSig''. The receiver MUST parse the ''scriptSig'' for the public key, even if the ''scriptSig'' is non-standard (e.g <code><dummy> OP_DROP <Signature> <Public Key></code>. This is to address the third-party malleability of ''P2PKH'' ''scriptSigs''.
+The receiver obtains the public key from the ''scriptSig''. The receiver MUST parse the ''scriptSig'' for the public key, even if the ''scriptSig'' is non-standard (e.g <code><dummy> OP_DROP <Signature> <Public Key></code>). This is to address the third-party malleability of ''P2PKH'' ''scriptSigs''.
 
 See the Appendix for an explanation on why outputs using ''OP_CHECKMULTISIG'' (i.e ''P2WSH-P2MS'') are excluded.
 
