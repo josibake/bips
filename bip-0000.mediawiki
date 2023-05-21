@@ -133,7 +133,7 @@ This gives Bob an alternative to using BIP32 for managing change, while still al
 
 We use the following functions and conventions:
 
-* ser<sub>32</sub>(i): serializes a 32-bit unsigned integer i as a 4-byte sequence, least significant byte first
+* ''outpoint'' (36 bytes): the <code>COutPoint</code> of an input (32-byte hash + 4-byte little-endian).
 
 For everything not defined above, we use the notation from [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#specification BIP340].
 
@@ -169,10 +169,9 @@ A silent payment address is constructed in the following manner:
 
 The sender and receiver MUST calculate an outpoint hash for the transaction in the following manner:
 
-* Collect each ''outpoint(36)'' used as an input to the transaction
-* Sort the ''outpoints'' by txid and vout, in ascending order
-* Let ''outpoints = txid<sub>0</sub> || ser<sub>32</sub>(vout<sub>0</sub>) || … || txid<sub>n</sub> || ser<sub>32</sub>(vout<sub>n</sub>)''
-* Let ''outpoint_hash = sha256(outpoints), truncated to the first 16 bytes''<ref name="why_16byte_hash">'''How was a 16 byte hash chosen?''' In order to support light clients, we expect a full node to calculate ''outpoint_hash·A'', where ''A'' is the sum of the input public keys for a transaction. Using a 16 byte hash instead of a 32 byte will speed up the EC multiplication by ~2x, assuming an optimized implementation. This is in keeping with a server-client model, where we want to minimize the work done by the server. Conversely, we don't want the hash to be too small as this increases the risk of a collision when spending UTXOs from the same public key. Using a 16 byte hash means we can spend from the same public key 6.1×10<sup>6</sup> times with only a ''p = 10<sup>−6</sup>'' probability of a collision (see [https://en.wikipedia.org/wiki/Birthday_problem#Probability_table Birthday Problem] for more details)</ref>
+* Collect each ''outpoint'' used as an input to the transaction
+* Let ''outpoints = outpoint<sub>0</sub> || … || outpoint<sub>n</sub>'', sorted by txid and vout, ascending order
+* Let ''outpoint_hash = sha256(outpoints), truncated to the first 16 bytes''<ref name="why_16byte_hash">'''How was a 16 byte hash chosen?''' In order to support light clients, we expect a full node to calculate ''outpoint_hash·A'', where ''A'' is the sum of the input public keys for a transaction. Using a 16 byte hash instead of a 32 byte will speed up the EC multiplication by ~2x, assuming an optimized implementation. This is in keeping with a server-client model, where we want to minimize the work done by the server. Conversly, we don't want the hash to be too small as this increases the risk of a collision when spending UTXOs from the same public key. Using a 16 byte hash means we can spend from the same public key 6.1×10<sup>6</sup> times with only a ''p = 10<sup>−6</sup>'' probability of a collision (see [https://en.wikipedia.org/wiki/Birthday_problem#Probability_table Birthday Problem] for more details)</ref>
 
 === Allowed Inputs ===
 
