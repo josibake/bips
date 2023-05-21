@@ -250,7 +250,7 @@ A scan and spend key pair using BIP32 derivation are defined (taking inspiration
     Spend private key: m / purpose' / coin_type' / account' / silent_payment_version' / 0' / k
      Scan private key: m / purpose' / coin_type' / account' / silent_payment_version' / 1'/ k
 
-Each value of ''k'' represents a pair of private keys needed for creating a silent payment address. In this way, multiple silent payment addresses can be derived from a single master key. Wallet software MUST use hardened derivation to ensure the master key is not exposed in the event the scan private key is compromised. Purpose is a constant set to BIP' (or <constant>) following the BIP43 recommendation. Refer to [https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki BIP44] for more details.
+Each value of ''k'' represents a pair of private keys needed for creating a silent payment address. In this way, multiple silent payment addresses can be derived from a single master key. Wallet software MUST use hardened derivation to ensure the master key is not exposed in the event the scan private key is compromised. Purpose is a constant set to ''BIP_NUMBER'' (or ''BIP_NUMBER_HEX'') following the BIP43 recommendation. Refer to [https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki BIP44] for more details.
 
 ==== Scanning ====
 
