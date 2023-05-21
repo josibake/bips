@@ -86,7 +86,6 @@ Alice performs the tweak with the sum of her input private keys in the following
 
 * Let ''outpoints_hash = hash(txid<sub>1</sub> || vout<sub>1</sub> || … txid<sub>n</sub> || vout<sub>n</sub>)''
 * Let ''a = a<sub>0</sub> + a<sub>1</sub> … + a<sub>n</sub>''
-* Let ''A = A<sub>0</sub> + A<sub>1</sub> … + A<sub>n</sub>''
 * Let ''P<sub>0</sub> = hash(outpoints_hash·a·B || 0)·G + B''
 
 ''' Spend and Scan Key '''
@@ -99,7 +98,7 @@ Bob detects this payment by calculating ''P<sub>0</sub> = hash(outpoints_hash·b
 
 ''' Labels '''
 
-For a single silent payment address of the form ''(B<sub>scan</sub>, B<sub>spend</sub>)'', Bob may wish to differentiate incoming payments by using labels. Naively, Bob could publish multiple silent payment addresses, but this would require him to scan for each one, which becomes prohibitively expensive<ref name="labels">'''ECC multiplication vs ECC addition''' TODO</ref>. Instead, Bob can tweak his spend public key ''B<sub>spend</sub>'' with an integer ''m'' in the following way:
+For a single silent payment address of the form ''(B<sub>scan</sub>, B<sub>spend</sub>)'', Bob may wish to differentiate incoming payments by using labels. Naively, Bob could publish multiple silent payment addresses, but this would require him to scan for each one, which becomes prohibitively expensive. Instead, Bob can tweak his spend public key ''B<sub>spend</sub>'' with an integer ''m'' in the following way:
 
 * Let ''B<sub>m</sub> = B<sub>spend</sub> + m·G''
 * Publish ''(B<sub>scan</sub>, B<sub>0</sub>)'', ''(B<sub>scan</sub>, B<sub>1</sub>) …''
