@@ -25,7 +25,7 @@ However, interaction is often infeasible and in many cases undesirable. To solve
 
 This proposal aims to address the limitations of these current approaches by presenting a solution that eliminates the need for interaction, eliminates the need for notifications, and protects both sender and receiver privacy.
 
-This proposal aims to address the limitations of these current approaches by presenting a solution that eliminates the need for interaction, eliminates the need for notifications, and protects both sender and receiver privacy. These benefits come at the cost of requiring wallets to scan the blockchain in order to detect payments. This added requirement is generally feasible for full nodes but poses a challenge for light clients. While it is possible today to implement a privacy-preserving light client at the cost of increased bandwidth, light client support is considered an area of open research (see [[bip-0000.mediawiki#appendix-light-client-support|Appendix: Light Client Support]]).
+This proposal aims to address the limitations of these current approaches by presenting a solution that eliminates the need for interaction, eliminates the need for notifications, and protects both sender and receiver privacy. These benefits come at the cost of requiring wallets to scan the blockchain in order to detect payments. This added requirement is generally feasible for full nodes but poses a challenge for light clients. While it is possible today to implement a privacy-preserving light client at the cost of increased bandwidth, light client support is considered an area of open research (see [[bip-0000.mediawiki#appendix-b-light-client-support|Appendix: Light Client Support]]).
 
 == Goals ==
 
@@ -183,13 +183,11 @@ While any UTXO can be used to fund the transaction, the sender and receiver MUST
 * ''P2SH-P2WPKH''
 * ''P2PKH''
 
-Rules for each ''scriptPubKey'' are listed below.
-
 ''' P2TR (keypath spends)'''
 
 The sender MUST use the tweaked private key corresponding to the taproot outer key (e.g. the tweaked private key for a keypath spend). If the sender cannot use the keypath spend or intends to spend the UTXO as a script path spend, they MUST NOT include the UTXO when funding a silent payment transaction.
 
-The receiver always uses the outer public key when scanning regardless of whether the taproot output is a keypath spend or a script path spend, unless the outer public key is a NUMS point. If the outer public key is a NUMS point, the receiver MUST skip the input when deriving the shared secret. This is to address a CoinJoin malleability issue<ref name="why_always_outer_pubkey">''' Why not always skip Taproot script path spends? ''' If the silent payments protocol skipped taproot script path spends, this would allow an attacker to join a CoinJoin round, participate in deriving the silent payment address using the tweaked private key for a keypath spend, and then broadcast their own version of the transaction using the script path spend. If receiver were to only consider keypath spends, they would skip the attacker's script path spend input when deriving the shared secret and not be able to find the funds.</ref>
+The receiver always uses the outer public key when scanning regardless of whether the taproot output is a keypath spend or a scriptpath spend, unless the outer public key is a NUMS point. If the outer public key is a NUMS point, the receiver MUST skip the input when deriving the shared secret. This is to address a CoinJoin malleability issue<ref name="why_always_outer_pubkey">''' Why not always skip Taproot script path spends? ''' If the silent payments protocol skipped taproot script path spends, this would allow an attacker to join a CoinJoin round, participate in deriving the silent payment address using the tweaked private key for a keypath spend, and then broadcast their own version of the transaction using the script path spend. If receiver were to only consider keypath spends, they would skip the attacker's script path spend input when deriving the shared secret and not be able to find the funds.</ref>
 
 ''' P2WPKH '''
 
@@ -218,7 +216,7 @@ See [[bip-0000.mediawiki#appendix-b-allowed-inputs|Appendix B: Allowed Inputs]] 
 The sending wallet performs coin selection as usual with the following restrictions:
 
 * At least one input MUST be from the ''Allowed Inputs'' list
-* Exclude ''P2TR'' inputs where the wallet cannot sign with the ''keypath'' tweaked private key
+* Exclude ''P2TR'' scriptpath spends
 
 ==== Creating outputs ====
 
@@ -276,7 +274,11 @@ Since each silent payment output address is derived independently, descriptor wa
 
 If using a seed phrase only style backup, the user can recover the wallet’s unspent outputs from the UTXO set (by only scanning transactions with at least one unspent taproot output) and can recover the full wallet history by scanning the blockchain, starting from the wallet birthday. If a wallet uses labels, this information SHOULD be included in the backup. If the user does not know whether or not labels were used, they can precompute a large number of labels based on a safe upper bound (e.g 100k labels) to use when re-scanning.
 
-== Appendix: Light Client Support ==
+== Appendix A: Allowed Inputs ==
+
+TBD
+
+== Appendix B: Light Client Support ==
 
 TBD
 
@@ -289,4 +291,4 @@ TBD
 
 == Acknowledgements ==
 
-thanks to everyone!
+TBD
