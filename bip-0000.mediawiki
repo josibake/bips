@@ -25,7 +25,7 @@ However, interaction is often infeasible and in many cases undesirable. To solve
 
 This proposal aims to address the limitations of these current approaches by presenting a solution that eliminates the need for interaction, eliminates the need for notifications, and protects both sender and receiver privacy.
 
-This proposal aims to address the limitations of these current approaches by presenting a solution that eliminates the need for interaction, eliminates the need for notifications, and protects both sender and receiver privacy. These benefits come at the cost of requiring wallets to scan the blockchain in order to detect payments. This added requirement is generally feasible for full nodes but poses a challenge for light clients. While it is possible today to implement a privacy-preserving light client at the cost of increased bandwidth, light client support is considered an area of open research (see [[bip-0000.mediawiki#appendix-b-light-client-support|Appendix: Light Client Support]]).
+This proposal aims to address the limitations of these current approaches by presenting a solution that eliminates the need for interaction, eliminates the need for notifications, and protects both sender and receiver privacy. These benefits come at the cost of requiring wallets to scan the blockchain in order to detect payments. This added requirement is generally feasible for full nodes but poses a challenge for light clients. While it is possible today to implement a privacy-preserving light client at the cost of increased bandwidth, light client support is considered an area of open research (see [[bip-0000.mediawiki#appendix-b-light-client-support|Appendix A: Light Client Support]]).
 
 == Goals ==
 
@@ -273,11 +273,11 @@ Since each silent payment output address is derived independently, descriptor wa
 
 If using a seed phrase only style backup, the user can recover the wallet’s unspent outputs from the UTXO set (by only scanning transactions with at least one unspent taproot output) and can recover the full wallet history by scanning the blockchain, starting from the wallet birthday. If a wallet uses labels, this information SHOULD be included in the backup. If the user does not know whether or not labels were used, they can precompute a large number of labels based on a safe upper bound (e.g 100k labels) to use when re-scanning.
 
-== Appendix A: Allowed Inputs ==
+== Appendix A: Light Client Support ==
 
 TBD
 
-== Appendix B: Light Client Support ==
+== Appendix B: Allowed Inputs ==
 
 TBD
 
