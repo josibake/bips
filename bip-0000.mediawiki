@@ -214,7 +214,7 @@ See the Appendix for an explanation on why outputs using ''OP_CHECKMULTISIG'' (i
 The sending wallet performs coin selection as usual with the following restrictions:
 
 * At least one input MUST be from the ''Allowed Inputs'' list
-* Exclude ''P2TR'' inputs where the wallet cannot sign with the ''keypath'' private key
+* Exclude ''P2TR'' inputs where the wallet cannot sign with the ''keypath'' tweaked private key
 
 ==== Creating outputs ====
 
