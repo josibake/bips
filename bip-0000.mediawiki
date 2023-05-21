@@ -25,6 +25,8 @@ However, interaction is often infeasible and in many cases undesirable. To solve
 
 This proposal aims to address the limitations of these current approaches by presenting a solution that eliminates the need for interaction, eliminates the need for notifications, and protects both sender and receiver privacy.
 
+This proposal aims to address the limitations of these current approaches by presenting a solution that eliminates the need for interaction, eliminates the need for notifications, and protects both sender and receiver privacy. These benefits come at the cost of requiring wallets to scan the blockchain in order to detect payments. This added requirement is generally feasible for full nodes, it poses a challenge for light clients. While it is possible today to implement a privacy-preserving light client at the cost of increased bandwidth, light client support is considered an area of open research (see [[bip-0000.mediawiki#appendix-light-client-support|Appendix: Light Client Support]] for a discussion on future work).
+
 == Goals ==
 
 We aim to present a transaction protocol which satisifies the following properties:
@@ -267,17 +269,15 @@ For each transaction the receiving wallet suspects might be a silent payment to 
 
 Since each silent payment output address is derived independently, descriptor wallets are recommended along with regular backups. When recovering from a backup, the wallet will need to scan since the last backup to detect new payments.
 
-If using a seed phrase only style backup, the user can recover the wallet’s current state from the UTXO set and can recover the wallet history by scanning the blockchain, starting from the wallet birthday.
+If using a seed phrase only style backup, the user can recover the wallet’s unspent outputs from the UTXO set (by only scanning transactions with at least one unspent taproot output) and can recover the full wallet history by scanning the blockchain, starting from the wallet birthday. If a wallet uses labels, this information SHOULD be included in the backup. If the user does not know whether or not labels were used, they can precompute a large number of labels based on a safe upper bound (e.g 100k labels) to use when re-scanning.
 
-===== Recovery from the UTXO set =====
+== Appendix: Light Client Support ==
 
-The wallet computes a tweak for every transaction containing at least one unspent taproot output, where the unspent output was created after the wallet birthday.
-
-===== Recovering transaction history =====
-
-All transactions created after the wallet birthday and with at least one taproot output will need to be scanned to recover the full transaction history.
+TBD
 
 == Test Vectors ==
+
+TBD
 
 == Rationale and References ==
 <references/>
