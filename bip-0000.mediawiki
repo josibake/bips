@@ -179,7 +179,7 @@ While any UTXO can be used to fund the transaction, the sender and receiver will
 * ''P2SH-P2WPKH''
 * ''P2PKH''
 
-Rules for identifying the public keys to use for each ''scriptPubKey'' are listed below.
+Rules for each ''scriptPubKey'' are listed below.
 
 ''' P2TR (keypath spends)'''
 
