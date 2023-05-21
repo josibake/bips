@@ -133,7 +133,8 @@ This gives Bob an alternative to using BIP32 for managing change, while still al
 
 We use the following functions and conventions:
 
-* ''outpoint'' (36 bytes): the <code>COutPoint</code> of an input (32-byte hash + 4-byte little-endian).
+* ''outpoint'' (36 bytes): the <code>COutPoint</code> of an input (32-byte hash + 4-byte little-endian)
+* ser<sub>32</sub>(i): serializes a 32-bit unsigned integer ''i'' as a 4-byte little-endian
 
 For everything not defined above, we use the notation from [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#specification BIP340].
 
