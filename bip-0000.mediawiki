@@ -221,11 +221,12 @@ The sending wallet performs coin selection as usual with the following restricti
 After the inputs have been selected, the sender can create one or more outputs for one or more silent payment addresses in the following manner:
 
 * Let ''a = a<sub>0</sub> + a<sub>1</sub> + … a<sub>i</sub>'', where each ''a<sub>i</sub>'' is the 256-bit private key(s) of an input from the ''Allowed Inputs'' list
+* Let ''ecdh_shared_secret = outpoint_hash·a·B<sub>scan</sub>''
 * Group receiver silent payment addresses by ''B<sub>scan</sub>'' (e.g each group consists of one ''B<sub>scan</sub>'' and one or more ''B<sub>m</sub>'')
 * For each group:
 ** Let ''n = 0''
 ** For each ''B<sub>m</sub>'' in the group:
-*** Let ''t<sub>n</sub> = sha256(outpoint_hash·a·B<sub>scan</sub>) || ser<sub>32</sub>(n))''
+*** Let ''t<sub>n</sub> = sha256(ecdh_shared_secret) || ser<sub>32</sub>(n))''
 *** Let ''P<sub>mn</sub> = t<sub>n</sub>·G + B<sub>m</sub>''
 *** Encode ''P<sub>mn</sub>'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output
 *** Optionally, repeat with n++ to create additional outputs for the current ''B<sub>m</sub>''
@@ -254,11 +255,11 @@ For wallets which support labels, the wallet SHOULD precompute ''1·G, 2·G, ...
 
 * Generate the ''outpoint_hash'', using the method described above
 * Let ''A = A<sub>0</sub> + A<sub>1</sub> + … A<sub>i</sub>'', where each ''A<sub>i</sub>'' is the public key(s) of an input from the ''Allowed Inputs'' list
+* Let ''ecdh_shared_secret = outpoint_hash·b<sub>scan</sub>·A''
 * Check for outputs:
-** Let ''shared_secret = outpoint_hash·b<sub>scan</sub>·A''
 ** Let ''outputs_to_check = all unspent taproot outputs in the transaction''
 ** Starting with ''n = 0'':
-*** Let ''t<sub>n</sub> = sha256(shared_secret || n)''
+*** Let ''t<sub>n</sub> = sha256(ecdh_shared_secret || n)''
 *** Compute ''P<sub>n</sub> = t<sub>n</sub>·G + B<sub>spend</sub>''
 **** If ''P<sub>n</sub>'' is in ''outputs_to_check'', add it to the wallet and continue with ''n++''
 **** If ''P<sub>n</sub>'' is not found and the wallet has precomputed labels:
