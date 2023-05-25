@@ -23,13 +23,11 @@ Using a new address for each Bitcoin transaction is a crucial aspect of maintain
 
 However, interaction is often infeasible and in many cases undesirable. To solve for this, various protocols have been proposed which use a static payment address and notifications sent via the blockchain <ref name="out_of_band_notifications">'''Why not use out-of-band notifications''' Out of band notifications (e.g. using something other than the Bitcoin blockchain) have been proposed as a way of addressing the privacy and cost concerns of using the Bitcoin blockchain as a messaging layer. This, however, simply moves the privacy and cost concerns somewhere else and increases the risk of losing money due to a notification not being reliably delivered, or even censored, and makes this notification data critical for backup to recover funds.</ref>. These protocols eliminate the need for interaction, but at the expense of increased costs for one-time payments and a noticeable footprint in the blockchain, potentially revealing metadata about the sender and receiver. Notification schemes also allow the receiver to link all payments from the same sender, compromising sender privacy.
 
-This proposal aims to address the limitations of these current approaches by presenting a solution that eliminates the need for interaction, eliminates the need for notifications, and protects both sender and receiver privacy.
-
 This proposal aims to address the limitations of these current approaches by presenting a solution that eliminates the need for interaction, eliminates the need for notifications, and protects both sender and receiver privacy. These benefits come at the cost of requiring wallets to scan the blockchain in order to detect payments. This added requirement is generally feasible for full nodes but poses a challenge for light clients. While it is possible today to implement a privacy-preserving light client at the cost of increased bandwidth, light client support is considered an area of open research (see [[bip-0000.mediawiki#appendix-a-light-client-support|Appendix A: Light Client Support]]).
 
 == Goals ==
 
-We aim to present a transaction protocol which satisifies the following properties:
+We aim to present a protocol which satisifies the following properties:
 
 * No increase in the size or cost of transactions
 * Resulting transactions blend in with other bitcoin transactions and can’t be distinguished
@@ -46,7 +44,7 @@ We aim to present a transaction protocol which satisifies the following properti
 
 == Overview ==
 
-We first present an informal overview of the protocol. In what follows, uppercase letters represent public keys, lowercase letters represent private keys, ''||'' refers to byte concatenation, and G represents the generator point for ''secp256k1''. Each section of the overview is incomplete on its own and is meant to build on the previous section in order to introduce and briefly explain each aspect of the protocol. For the full protocol specification, see [[bip-0000.mediawiki#specification|Specification]].
+We first present an informal overview of the protocol. In what follows, uppercase letters represent public keys, lowercase letters represent private keys, ''||'' refers to byte concatenation, and ''G'' represents the generator point for ''secp256k1''. Each section of the overview is incomplete on its own and is meant to build on the previous section in order to introduce and briefly explain each aspect of the protocol. For the full protocol specification, see [[bip-0000.mediawiki#specification|Specification]].
 
 ''' Simple case '''
 
@@ -59,7 +57,8 @@ Since ''a·B == b·A'' ([https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%
 
 ''' Creating more than one output '''
 
-In order to allow Alice to create more than one output for Bob<ref name="why_more_than_one_output">'''Why allow for more than one output?''' Allowing Alice to break her payment to Bob into multiple amounts opens up a number of privacy improving techniques for Alice, such as making the transaction look like a CoinJoin or better hiding the change amount by splitting both the payment and change outputs into multiple amounts. It also allows for Alice and Carol to both have their own unique output paying Bob in the event they are in a collaborative transaction and both paying Bob's silent payment address.</ref>, we included an integer in the following manner:
+In order to allow Alice to create more than one output for Bob<ref name="why_more_than_one_output">'''Why allow for more than one output?''' Allowing Alice to break her payment to Bob into multiple amounts opens up a number of privacy improving techniques for Alice, 
+making the transaction look like a CoinJoin or better hiding the change amount by splitting both the payment and change outputs into multiple amounts. It also allows for Alice and Carol to both have their own unique output paying Bob in the event they are in a collaborative transaction and both paying Bob's silent payment address.</ref>, we included an integer in the following manner:
 
 * Let ''n = 0''
 * Let ''P<sub>0</sub> = hash(a·B || n)·G + B''
@@ -86,11 +85,11 @@ Bob must include the same ''outpoint_hash'' when scanning.
 
 ''' Using all inputs '''
 
-In our simplified example we have been referring to Alice’s transactions as having only one input ''A'', but in reality a Bitcoin transaction can have many inputs. Instead of requiring Alice to pick a particular input and requiring Bob to check each input separately, we can instead require Alice to perform the tweak with the sum of the input public keys<ref name="other_inputs">'''What about inputs without public keys?''' Inputs without public keys (such as ''P2SH'' outputs) can still be spent in the transaction but are not included in the ''Silent Payments'' protocol.</ref>. This significantly reduces Bob's scanning requirement, makes light client support more feasible<ref name="using_all_inputs">'''How does using all inputs help light clients?''' If Alice uses a random input for the tweak, Bob necessarily has to have access to and check all transaction inputs, which requires performing an ECC multiplication per input. If instead Alice performs the tweak with the sum of the input public keys, Bob only needs the summed 32 byte public key per transaction and only does one ECC multiplication per transaction. Bob can then use BIP158 block filters to determine if any of the outputs exist in a block and thus avoids downloading transactions which don't belong to him.</ref>, and protects Alice's privacy in collaborative transaction protocols such as CoinJoin<ref name=""all_inputs_and_coinjoin">'''Why does using all inputs matter for CoinJoin?''' If Alice uses a random input to create the output for Bob, this necessarily reveals to Bob which input Alice has control of. If Alice is paying Bob as part of a CoinJoin, this would reveal which input belongs to her, degrading the anonymity set of the CoinJoin and giving Bob more information about Alice. If instead all inputs are used, Bob has no way of knowing which input(s) belong to Alice. This comes at the cost of increased complexity as the CoinJoin participants now need to coordinate to create the silent payment output and would need to use [https://gist.github.com/RubenSomsen/be7a4760dd4596d06963d67baf140406 Blind-Diffie-Hellman] to prevent the other participants from learning who Alice is paying</ref>.
+In our simplified example we have been referring to Alice’s transactions as having only one input ''A'', but in reality a Bitcoin transaction can have many inputs. Instead of requiring Alice to pick a particular input and requiring Bob to check each input separately, we can instead require Alice to perform the tweak with the sum of the input public keys<ref name="other_inputs">'''What about inputs without public keys?''' Inputs without public keys can still be spent in the transaction but are simply ignored in the ''Silent Payments'' protocol.</ref>. This significantly reduces Bob's scanning requirement, makes light client support more feasible<ref name="using_all_inputs">'''How does using all inputs help light clients?''' If Alice uses a random input for the tweak, Bob necessarily has to have access to and check all transaction inputs, which requires performing an ECC multiplication per input. If instead Alice performs the tweak with the sum of the input public keys, Bob only needs the summed 32 byte public key per transaction and only does one ECC multiplication per transaction. Bob can then use BIP158 block filters to determine if any of the outputs exist in a block and thus avoids downloading transactions which don't belong to him.</ref>, and protects Alice's privacy in collaborative transaction protocols such as CoinJoin<ref name=""all_inputs_and_coinjoin">'''Why does using all inputs matter for CoinJoin?''' If Alice uses a random input to create the output for Bob, this necessarily reveals to Bob which input Alice has control of. If Alice is paying Bob as part of a CoinJoin, this would reveal which input belongs to her, degrading the anonymity set of the CoinJoin and giving Bob more information about Alice. If instead all inputs are used, Bob has no way of knowing which input(s) belong to Alice. This comes at the cost of increased complexity as the CoinJoin participants now need to coordinate to create the silent payment output and would need to use [https://gist.github.com/RubenSomsen/be7a4760dd4596d06963d67baf140406 Blind-Diffie-Hellman] to prevent the other participants from learning who Alice is paying</ref>.
 
 Alice performs the tweak with the sum of her input private keys in the following manner:
 
-* Let ''outpoints_hash = hash(txid<sub>1</sub> || vout<sub>1</sub> || … txid<sub>n</sub> || vout<sub>n</sub>)''
+* Let ''outpoints_hash = hash(txid<sub>0</sub> || vout<sub>0</sub> || … txid<sub>n</sub> || vout<sub>n</sub>)''
 * Let ''a = a<sub>0</sub> + a<sub>1</sub> … + a<sub>n</sub>''
 * Let ''P<sub>0</sub> = hash(outpoints_hash·a·B || 0)·G + B''
 
@@ -104,7 +103,7 @@ Bob detects this payment by calculating ''P<sub>0</sub> = hash(outpoints_hash·b
 
 ''' Labels '''
 
-For a single silent payment address of the form ''(B<sub>scan</sub>, B<sub>spend</sub>)'', Bob may wish to differentiate incoming payments by using labels. Naively, Bob could publish multiple silent payment addresses, but this would require him to scan for each one, which becomes prohibitively expensive. Instead, Bob can tweak his spend public key ''B<sub>spend</sub>'' with an integer ''m'' in the following way:
+For a single silent payment address of the form ''(B<sub>scan</sub>, B<sub>spend</sub>)'', Bob may wish to differentiate incoming payments. Naively, Bob could publish multiple silent payment addresses, but this would require him to scan for each one, which becomes prohibitively expensive. Instead, Bob can label his spend public key ''B<sub>spend</sub>'' with an integer ''m'' in the following way:
 
 * Let ''B<sub>m</sub> = B<sub>spend</sub> + m·G''
 * Publish ''(B<sub>scan</sub>, B<sub>0</sub>)'', ''(B<sub>scan</sub>, B<sub>1</sub>) …''
@@ -118,7 +117,7 @@ It is important to note that an outside observer can easily deduce that each pub
 
 ''' Labels for change '''
 
-Bob can also use labels for managing his own change outputs. To do so, he can reserve a special label in the following manner:
+Bob can also use labels for managing his own change outputs. To do so, he can reserve a secret change label in the following manner:
 
 * Let ''B<sub>change</sub> = B<sub>spend</sub> + hash(b<sub>scan</sub>)·G
 
