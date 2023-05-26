@@ -282,11 +282,11 @@ This distinction makes the problem for light clients more clear: light clients n
 
 Recall that a silent payment eligible transaction is any transaction with at least one input from the ''Inputs for Shared Secret Derivation'' list and at least one unspent taproot output. Full nodes (or any index server backed by a full node, such as electrum server) can build an index which collects all of the eligible public keys for a silent payments eligible transaction, sums them up, and serves them to clients. This would be 32 bytes per silent payment eligible transaction.
 
-For a typical bitcoin block of ~3500 txs, lets assume every transaction is a silent payments eligible transaction. This means a client would need to request ''32 bytes * 3500'' of data per block (roughly 100 kb). As of today, these numbers are closer to 2kb - 10kb.
+For a typical bitcoin block of ~3500 txs, lets assume every transaction is a silent payments eligible transaction. This means a client would need to request ''32 bytes * 3500'' of data per block (roughly 100 kb per block). If a client were to request data for every block, this would amount to ~450mb per month, assuming 100% taproot usage and all outputs remain unspent for > 1 month. As of today, these numbers are closer to 2kb - 10kb per block (10mb - 40mb per month).
 
 === Transaction cut-through ===
 
-Light clients can also take advantage of transaction cut-through, depending on how often they choose to scan for new blocks. Empirically, ~75% of transactions with at least one unspent taproot output will have spent all taproot UTXOs in 425 blocks or less. This means a client which only scans once every 3 days could *significantly* cut down on the number of blocks and the number of transactions per block that they need to request by only asking for data on transactions that were created since their last scan and that still have at least one unspent taproot output as of the current block height.
+It is unlikely a light client would need to scan every block and as such can take advantage of transaction cut-through, depending on how often they choose to scan for new blocks. Empirically, ~75% of transactions with at least one unspent taproot output will have spent all taproot UTXOs in 425 blocks or less. This means a client which only scans once every 3 days could ''significantly'' cut down on the number of blocks and the number of transactions per block that they need to request by only asking for data on transactions that were created since their last scan and that still have at least one unspent taproot output as of the current block height. A client that scans once a month would likely only need around 500 blocks worth of data (50mb per month), assuming 100% taproot usage.
 
 === BIP158 ===
 
