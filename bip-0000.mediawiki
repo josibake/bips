@@ -298,7 +298,7 @@ Assuming a secure messaging protocol exists and a BIP158-like filter type for si
 
           block_height: the block height when the transaction was sent (not confirmed)
                   txid: txid of the transaction
-    32-byte tweak data:
+    32-byte tweak data: sum of the input public keys used for the shared secret derivation
      vout(s),amount(s): the vout index(s) of outputs for the receiver and their associated amounts
 
 This message contains everything the receiver would need to:
