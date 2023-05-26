@@ -57,8 +57,7 @@ Since ''a·B == b·A'' ([https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%
 
 ''' Creating more than one output '''
 
-In order to allow Alice to create more than one output for Bob<ref name="why_more_than_one_output">'''Why allow for more than one output?''' Allowing Alice to break her payment to Bob into multiple amounts opens up a number of privacy improving techniques for Alice, 
-making the transaction look like a CoinJoin or better hiding the change amount by splitting both the payment and change outputs into multiple amounts. It also allows for Alice and Carol to both have their own unique output paying Bob in the event they are in a collaborative transaction and both paying Bob's silent payment address.</ref>, we included an integer in the following manner:
+In order to allow Alice to create more than one output for Bob<ref name="why_more_than_one_output">'''Why allow for more than one output?''' Allowing Alice to break her payment to Bob into multiple amounts opens up a number of privacy improving techniques for Alice, making the transaction look like a CoinJoin or better hiding the change amount by splitting both the payment and change outputs into multiple amounts. It also allows for Alice and Carol to both have their own unique output paying Bob in the event they are in a collaborative transaction and both paying Bob's silent payment address.</ref>, we included an integer in the following manner:
 
 * Let ''n = 0''
 * Let ''P<sub>0</sub> = hash(a·B || n)·G + B''
@@ -275,7 +274,40 @@ If using a seed phrase only style backup, the user can recover the wallet’s un
 
 == Appendix A: Light Client Support ==
 
-TBD
+This section proposes a few ideas for how light clients could be supported in ways that preserve bandwidth and privacy. While this is out of scope for the current BIP, it is included to movitate further research into this topic. In this context, a light client refers to any bitcoin wallet client which does not process blocks and does not have a direct connection to a node which does process blocks (e.g a full node). Based on this definition, clients that directly connect to a personal electrum server or a bitcoin node are not light clients.
+
+This distinction makes the problem for light clients more clear: light clients need a way to source the necessary data for performing the tweaks and a way of determining if any of the generated outputs exist in a block.
+
+=== Tweak Data ===
+
+Recall that a silent payment eligible transaction is any transaction with at least one input from the ''Inputs for Shared Secret Derivation'' list and at least one unspent taproot output. Full nodes (or any index server backed by a full node, such as electrum server) can build an index which collects all of the eligible public keys for a silent payments eligible transaction, sums them up, and serves them to clients. This would be 32 bytes per silent payment eligible transaction.
+
+For a typical bitcoin block of ~3500 txs, lets assume every transaction is a silent payments eligible transaction. This means a client would need to request ''32 bytes * 3500'' of data per block (roughly 100 kb). As of today, these numbers are closer to 2kb - 10kb.
+
+=== Transaction cut-through ===
+
+Light clients can also take advantage of transaction cut-through, depending on how often they choose to scan for new blocks. Empirically, ~75% of transactions with at least one unspent taproot output will have spent all taproot UTXOs in 425 blocks or less. This means a client which only scans once every 3 days could *significantly* cut down on the number of blocks and the number of transactions per block that they need to request by only asking for data on transactions that were created since their last scan and that still have at least one unspent taproot output as of the current block height.
+
+=== BIP158 ===
+
+Once a light client has the tweak data for a block, they can determine whether or not an output to them exists in the block using BIP158 block filters. Per BIP158, they would then request the entire block and add the transaction to their wallet, but it maybe be possible to only request the prevout txids and vouts for all transactions with at least one taproot output, along with the scriptPubKeys and amounts. This would allow the client to download the necessary data for constructing a spending transaction, without downloading the entire block. How this affects the security assumptions of BIP158 is an open question.
+
+=== Out-of-band notifications ===
+
+Assuming a secure messaging protocol exists and a BIP158-like filter type for silent payment tweak data exists, the sender can send an encrypted (using the scan public key of the silent payment address) message to the receiver with the following information:
+
+          block_height: the block height when the transaction was sent (not confirmed)
+                  txid: txid of the transaction
+    32-byte tweak data:
+     vout(s),amount(s): the vout index(s) of outputs for the receiver and their associated amounts
+
+This message contains everything the receiver would need to:
+
+* Verify the scriptPubKey was derived using the silent payments protocol
+* Check if the scriptPubKey exists in a block
+* Construct a valid bitcoin transaction spending the UTXO
+
+The receiver would request a silent payment tweak data filter and check that the tweak data from the sender exists in a block. For the same block, they can check if the generated scriptPubKey(s) exist using a BIP158 block filter. At this point, they can add the UTXO(s) to their wallet and construct valid spending transactions (assuming it is sufficiently secure to trust the BIP158 filters without downloading the full block). At any point, the receiver can fall back to scanning for silent payment transactions if they don't trust the notifications they are receiving of if they are concerned that they are not receiving notifications.
 
 == Appendix B: Inputs For Shared Secret Derivation ==
 
