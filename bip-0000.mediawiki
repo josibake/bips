@@ -8,14 +8,18 @@
   Status: Draft
   Type: Informational
   Created: 2023-03-09
-  License: MIT
+  License: BSD 2-Clause
 </pre>
 
 == Introduction ==
 
 === Abstract ===
 
+This document specifies a protocol for static payment addresses in Bitcoin without the use of on-chain notifications.
+
 === Copyright ===
+
+This BIP is licensed under the BSD 2-clause license.
 
 === Motivation ===
 
@@ -322,4 +326,4 @@ TBD
 
 == Acknowledgements ==
 
-TBD
+This document is the result of many discussions and contains contributions by a number of people. The authors wish to thank all those who provided valuable feedback and reviews, including the participants of the [BIP47 Prague discussion](https://gist.github.com/RubenSomsen/21c477c90c942acf45f8e8f5c1ad4fae) and the [Advancing Bitcoin Silent Payments Workshop](https://github.com/josibake/silent-payments-workshop). The authors would like to also thank [w0xlt](https://github.com/w0xlt) for writing the initial implementation of silent payments.
