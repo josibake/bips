@@ -15,7 +15,7 @@
 
 === Abstract ===
 
-This document specifies a protocol for static payment addresses in Bitcoin without the use of on-chain notifications.
+This document specifies a protocol for static payment addresses in Bitcoin without on-chain linkability of payments or a need for on-chain notifications.
 
 === Copyright ===
 
@@ -168,13 +168,13 @@ A silent payment address is constructed in the following manner:
 *** The character "q", to represent a silent payment address of version 0
 *** The 64 byte concatenation of the Recipient's public keys, ''B<sub>m</sub> || B<sub>scan</sub>''
 
-=== Outpoint hash ===
+=== Outpoints hash ===
 
-The sender and receiver MUST calculate an outpoint hash for the transaction in the following manner:
+The sender and receiver MUST calculate an outpoints hash for the transaction in the following manner:
 
 * Collect each ''outpoint'' used as an input to the transaction
 * Let ''outpoints = outpoint<sub>0</sub> || … || outpoint<sub>n</sub>'', sorted by txid and vout, ascending order
-* Let ''outpoint_hash = sha256(outpoints)''
+* Let ''outpoints_hash = sha256(outpoints)''
 
 === Inputs For Shared Secret Derivation ===
 
@@ -225,7 +225,7 @@ The sending wallet performs coin selection as usual with the following restricti
 After the inputs have been selected, the sender can create one or more outputs for one or more silent payment addresses in the following manner:
 
 * Let ''a = a<sub>0</sub> + a<sub>1</sub> + … a<sub>i</sub>'', where each ''a<sub>i</sub>'' is the 256-bit private key(s) of an input from the ''Inputs For Shared Secret Derivation'' list
-* Let ''ecdh_shared_secret = outpoint_hash·a·B<sub>scan</sub>''
+* Let ''ecdh_shared_secret = outpoints_hash·a·B<sub>scan</sub>''
 * Group receiver silent payment addresses by ''B<sub>scan</sub>'' (e.g. each group consists of one ''B<sub>scan</sub>'' and one or more ''B<sub>m</sub>'')
 * For each group:
 ** Let ''n = 0''
@@ -256,9 +256,9 @@ Each value of ''k'' represents a pair of private keys needed for creating a sile
 
 For each transaction the receiving wallet suspects might be a silent payment to themselves, it must:
 
-* Generate the ''outpoint_hash'', using the method described above
+* Generate the ''outpoints_hash'', using the method described above
 * Let ''A = A<sub>0</sub> + A<sub>1</sub> + … A<sub>i</sub>'', where each ''A<sub>i</sub>'' is the public key(s) of an input from the ''Inputs For Shared Secret Derivation'' list
-* Let ''ecdh_shared_secret = outpoint_hash·b<sub>scan</sub>·A''
+* Let ''ecdh_shared_secret = outpoints_hash·b<sub>scan</sub>·A''
 * Check for outputs:
 ** Let ''outputs_to_check = all unspent taproot outputs in the transaction''
 ** Starting with ''n = 0'':
@@ -284,7 +284,7 @@ This distinction makes the problem for light clients more clear: light clients n
 
 === Tweak Data ===
 
-Recall that a silent payment eligible transaction is any transaction with at least one input from the ''Inputs for Shared Secret Derivation'' list and at least one unspent taproot output. Full nodes (or any index server backed by a full node, such as electrum server) can build an index which collects all of the eligible public keys for a silent payments eligible transaction, sums them up, and serves them to clients. This would be 32 bytes per silent payment eligible transaction.
+Recall that a silent payment eligible transaction is any transaction with at least one input from the ''Inputs for Shared Secret Derivation'' list and at least one unspent taproot output. Full nodes (or any index server backed by a full node, such as electrum server) can build an index which collects all of the eligible public keys for a silent payments eligible transaction, sums them up, multiplies the sum by the ''outpoints_hash'', and serves them to clients. This would be 32 bytes per silent payment eligible transaction.
 
 For a typical bitcoin block of ~3500 txs, lets assume every transaction is a silent payments eligible transaction. This means a client would need to request ''32 bytes * 3500'' of data per block (roughly 100 kb per block). If a client were to request data for every block, this would amount to ~450mb per month, assuming 100% taproot usage and all outputs remain unspent for > 1 month. As of today, these numbers are closer to 2kb - 10kb per block (10mb - 40mb per month).
 
@@ -326,4 +326,4 @@ TBD
 
 == Acknowledgements ==
 
-This document is the result of many discussions and contains contributions by a number of people. The authors wish to thank all those who provided valuable feedback and reviews, including the participants of the [BIP47 Prague discussion](https://gist.github.com/RubenSomsen/21c477c90c942acf45f8e8f5c1ad4fae) and the [Advancing Bitcoin Silent Payments Workshop](https://github.com/josibake/silent-payments-workshop). The authors would like to also thank [w0xlt](https://github.com/w0xlt) for writing the initial implementation of silent payments.
+This document is the result of many discussions and contains contributions by a number of people. The authors wish to thank all those who provided valuable feedback and reviews, including the participants of the [https://gist.github.com/RubenSomsen/21c477c90c942acf45f8e8f5c1ad4fae BIP47 Prague discussion], the [https://github.com/josibake/silent-payments-workshop Advancing Bitcoin Silent Payments Workshop], and [https://btctranscripts.com/bitcoin-core-dev-tech/2023-04-26-silent-payments/ coredev]. The authors would like to also thank [https://github.com/w0xlt w0xlt] for writing the initial implementation of silent payments.
