@@ -173,7 +173,7 @@ A silent payment address is constructed in the following manner:
 The sender and receiver MUST calculate an outpoints hash for the transaction in the following manner:
 
 * Collect each ''outpoint'' used as an input to the transaction
-* Let ''outpoints = outpoint<sub>0</sub> || … || outpoint<sub>n</sub>'', sorted by txid and vout, ascending order
+* Let ''outpoints = outpoint<sub>0</sub> || … || outpoint<sub>n</sub>'', sorted by txid and vout, ascending order<ref name="why_sort_outpoints">'''Why are outpoints sorted before hashing?''' This way the silent payment otuput does not need to be recalculated if the wallet changes the order of inputs, e.g. at signing time or during an RBF bump.</ref>
 * Let ''outpoints_hash = sha256(outpoints)''
 
 === Inputs For Shared Secret Derivation ===
