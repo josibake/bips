@@ -168,6 +168,8 @@ A silent payment address is constructed in the following manner:
 *** The character "q", to represent a silent payment address of version 0
 *** The 64 byte concatenation of the receiver's public keys, ''B<sub>scan</sub> || B<sub>m</sub>''
 
+Note: [https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki BIP173] imposes a 90 character limit for Bech32 strings, whereas a silent payment address requires 115 characters.
+
 === Outpoints hash ===
 
 The sender and receiver MUST calculate an outpoints hash for the transaction in the following manner:
