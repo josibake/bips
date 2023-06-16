@@ -135,8 +135,10 @@ This gives Bob an alternative to using BIP32 for managing change, while still al
 
 We use the following functions and conventions:
 
-* ''outpoint'' (36 bytes): the <code>COutPoint</code> of an input (32-byte hash + 4-byte little-endian)
-* ser<sub>32</sub>(i): serializes a 32-bit unsigned integer ''i'' as a 4-byte little-endian
+* ''outpoint'' (36 bytes): the <code>COutPoint</code> of an input (32-byte txid, least significant byte first || 4-byte vout, least significant byte first)<ref name="why_little_endian">'''Why are outpoints little-endian?''' Despite using big endian throughout the rest of the BIP, outpoints are sorted and hashed matching their transaction serialization, which is little-endian. This allows a wallet to parse a serialized transaction for use in silent payments without needing to re-order the bytes when compute the outpoint hash. Note: despite outpoints being stored and serialized as little-endian, the transaction hash (txid) is always displayed as big-endian.</ref>
+* ser<sub>32</sub>(i): serializes a 32-bit unsigned integer ''i'' as a 4-byte sequence, most significant byte first.
+* ser<sub>256</sub>(p): serializes the integer p as a 32-byte sequence, most significant byte first.
+* ser<sub>P</sub>(P): serializes the coordinate pair P = (x,y) as a byte sequence using SEC1's compressed form: (0x02 or 0x03) || ser<sub>256</sub>(x), where the header byte depends on the parity of the omitted y coordinate.
 
 For everything not defined above, we use the notation from [https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#specification BIP340].
 
@@ -230,10 +232,10 @@ After the inputs have been selected, the sender can create one or more outputs f
 * Generate the ''outpoints_hash'', using the method described above
 * Group receiver silent payment addresses by ''B<sub>scan</sub>'' (e.g. each group consists of one ''B<sub>scan</sub>'' and one or more ''B<sub>m</sub>'')
 * For each group:
-** Let ''ecdh_shared_secret = outpoints_hash·a·B<sub>scan</sub>'', where ''ecdh_shared_secret'' is a compressed public key
+** Let ''ecdh_shared_secret = outpoints_hash·a·B<sub>scan</sub>''
 ** Let ''n = 0''
 ** For each ''B<sub>m</sub>'' in the group:
-*** Let ''t<sub>n</sub> = sha256(ecdh_shared_secret || ser<sub>32</sub>(n))''
+*** Let ''t<sub>n</sub> = sha256(ser<sub>P</sub>(ecdh_shared_secret) || ser<sub>32</sub>(n))''
 *** Let ''P<sub>mn</sub> = B<sub>m</sub> + t<sub>n</sub>·G''
 *** Encode ''P<sub>mn</sub>'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output
 *** Optionally, repeat with n++ to create additional outputs for the current ''B<sub>m</sub>''
@@ -259,11 +261,11 @@ For each transaction the receiving wallet suspects might be a silent payment to 
 
 * Generate the ''outpoints_hash'', using the method described above
 * Let ''A = A<sub>0</sub> + A<sub>1</sub> + … A<sub>n</sub>'', where each ''A<sub>i</sub>'' is the public key of an input from the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' list
-* Let ''ecdh_shared_secret = outpoints_hash·b<sub>scan</sub>·A'', where ''ecdh_shared_secret'' is a compressed public key
+* Let ''ecdh_shared_secret = outpoints_hash·b<sub>scan</sub>·A''
 * Check for outputs:
 ** Let ''outputs_to_check = the taproot output key from each unspent taproot output in the transaction''
 ** Starting with ''n = 0'':
-*** Let ''t<sub>n</sub> = sha256(ecdh_shared_secret || ser<sub>32</sub>(n))''
+*** Let ''t<sub>n</sub> = sha256(ser<sub>P</sub>(ecdh_shared_secret) || ser<sub>32</sub>(n))''
 *** Compute ''P<sub>n</sub> = B<sub>spend</sub> + t<sub>n</sub>·G''
 *** For each ''output'' in ''outputs_to_check'':
 **** If ''P<sub>n</sub>'' equals ''output'':
