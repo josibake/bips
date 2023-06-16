@@ -144,7 +144,9 @@ For everything not defined above, we use the notation from [https://github.com/b
 
 === Versions ===
 
-This document defines ''Silent Payments v0''. Version is communicated through the address in the same way as native Segwit addresses. Future upgrades to silent payments will require a new version. For ''Silent Payments v0'':
+This document defines ''Silent Payments v0''. Version is communicated through the address in the same way as native Segwit addresses. Future upgrades to silent payments will require a new version. As much as possible, future upgrades should support receiving from older wallets (e.g. a silent payments v0 wallet can send to both v0 and v1 addresses). Any changes that break compatibility with older silent payment versions should be a new BIP.
+
+For ''Silent Payments v0'':
 
 * Receiver addresses are always [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot outputs<ref name="why_taproot">'''Why only taproot outputs?''' Providing too much optionality for the protocol makes it difficult to implement and can be at odds with the goal of providing the best privacy. Limiting to taproot outputs helps simplify the implementation significantly while also putting users in the best eventual anonymity set.</ref>
 * The sender should sign with one of the sighash flags ''ALL, SINGLE, NONE'' (''ANYONECANPAY'' is unsafe). It is strongly recommended implementations only use ''SIGHASH_ALL'' for silent payments<ref name="why_sighash_all">'''Why recommend ''SIGHASH_ALL''?''' Since the output address for the receiver is derived from from the sum of the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' public keys, the inputs must not change once the sender has signed the transaction. If the inputs are allowed to change after the fact, the receiver will not be able to calculate the shared secret needed to find and spend the output. It is currently an open question on how a future version of silent payments could be made to work with new sighash flags such as ''SIGHASH_GROUP'' and ''SIGHASH_ANYPREVOUT''.</ref>
@@ -250,8 +252,8 @@ Two keys are needed to create a silent payments address: the spend key and the s
 A scan and spend key pair using BIP32 derivation are defined (taking inspiration from [https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki BIP44]) in the following manner:
 
 
-    Spend private key: m / purpose' / coin_type' / account' / silent_payment_version' / 0' / 0
-     Scan private key: m / purpose' / coin_type' / account' / silent_payment_version' / 1' / 0
+    Spend private key: m / purpose' / coin_type' / account' / 0' / 0
+     Scan private key: m / purpose' / coin_type' / account' / 1' / 0
 
 Wallet software MUST use hardened derivation to ensure the master key is not exposed in the event the scan private key is compromised. Purpose is a constant set to ''BIP_NUMBER'' following the BIP43 recommendation. Refer to [https://github.com/bitcoin/bips/blob/master/bip-0043.mediawiki BIP43] and [https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki BIP44] for more details.
 
