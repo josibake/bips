@@ -1,14 +1,14 @@
 <pre>
-  BIP: ????
+  BIP: 352
   Layer: Applications
   Title: Silent Payments
   Author: josibake <josibake@protonmail.com>
           Ruben Somsen <rsomsen@gmail.com>
-  Comments-URI: https://github.com/bitcoin/bips/wiki/Comments:BIP-????
+  Comments-URI: https://github.com/bitcoin/bips/wiki/Comments:BIP-0352
   Status: Draft
   Type: Informational
   Created: 2023-03-09
-  License: BSD 2-Clause
+  License: BSD-2-Clause
 </pre>
 
 == Introduction ==
@@ -264,7 +264,7 @@ A scan and spend key pair using BIP32 derivation are defined (taking inspiration
     Spend private key: m / purpose' / coin_type' / account' / 0' / 0
      Scan private key: m / purpose' / coin_type' / account' / 1' / 0
 
-Wallet software MUST use hardened derivation to ensure the master key is not exposed in the event the scan private key is compromised. Purpose is a constant set to ''BIP_NUMBER'' following the BIP43 recommendation. Refer to [https://github.com/bitcoin/bips/blob/master/bip-0043.mediawiki BIP43] and [https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki BIP44] for more details.
+Wallet software MUST use hardened derivation to ensure the master key is not exposed in the event the scan private key is compromised. Purpose is a constant set to ''352'' following the BIP43 recommendation. Refer to [https://github.com/bitcoin/bips/blob/master/bip-0043.mediawiki BIP43] and [https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki BIP44] for more details.
 
 ==== Scanning ====
 
@@ -317,7 +317,7 @@ For a typical bitcoin block of ~3500 txs, lets assume every transaction is a sil
 
 It is unlikely a light client would need to scan every block and as such can take advantage of transaction cut-through, depending on how often they choose to scan for new blocks. Empirically, ~75% of transactions with at least one unspent taproot output will have spent all taproot UTXOs in 326 blocks or less<ref name="appendix_data"></ref>. This means a client which only scans once every 3 days could ''significantly'' cut down on the number of blocks and the number of transactions per block that they need to request by only asking for data on transactions that were created since their last scan and that still have at least one unspent taproot output as of the current block height. Assuming 100% taproot usage, a client that scans once a month would likely only need around 50MB worth of data. Based on current taproot adoption, a light client scanning once every 3 days would use roughly 15MB per month and a client scanning once per month would use less than 5MB per month.
 
-[[File:bip-0000/scan_data_downloader_per_month.png]]
+[[File:bip-0352/scan_data_downloader_per_month.png]]
 
 === BIP158 ===
 
