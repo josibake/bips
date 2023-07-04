@@ -127,7 +127,7 @@ Bob can also use labels for managing his own change outputs. To do so, he can re
 Now, whenever Bob is spending (to a silent payment address or otherwise), he can create a change output for himself using the silent payments protocol and his change label in the following manner:
 
 * Let ''a = a<sub>0</sub> + a<sub>1</sub> … + a<sub>n</sub>'' represent the private keys of the inputs Bob is using to fund the transaction
-* Let ''P<sub>change</sub> = B<sub>spend</sub> + hash(outpoints_hash·a·B<sub>change</sub> || 0)·G''
+* Let ''P<sub>change</sub> = B<sub>change</sub> + hash(outpoints_hash·a·B<sub>scan</sub> || 0)·G''
 
 This gives Bob an alternative to using BIP32 for managing change, while still allowing him to know which of his unspent outputs were change when recovering his wallet from the master key. The change label needs to remain a secret in order to ensure nobody else can label payments as change.
 
@@ -242,6 +242,15 @@ After the inputs have been selected, the sender can create one or more outputs f
 *** Encode ''P<sub>mn</sub>'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output
 *** Optionally, repeat with n++ to create additional outputs for the current ''B<sub>m</sub>''
 *** If no additional outputs are required, continue to the next ''B<sub>m</sub>'' with ''n++''<ref name="why_not_the_same_tn">''' Why not re-use ''t<sub>n</sub>''? when paying different labels to the same receiver?''' If paying the same entity but to two separate labeled addresses in the same transaction without incrementing ''n'', the two outputs would be ''B<sub>spend</sub> + t<sub>n</sub>·G + i·G'' and ''B<sub>spend</sub> + t<sub>n</sub>·G + j·G''. The attacker could subtract the two values and observe that the distance between i and j is small. This would allow them to deduce that this transaction is a silent payment transaction and that a single entity received two outputs, but won't tell them who the entity is.</ref>
+** Optionally, if the sending wallet implements receiving silent payments, it can create change outputs in the following manner:
+*** Let ''A<sub>change</sub> = A<sub>spend</sub> + sha256(ser<sub>256</sub>(a<sub>scan</sub>))·G''
+*** Let ''change_shared_secret = outpoints_hash·a·A<sub>scan</sub>''
+*** Let ''n = 0''
+*** For each change output desired:
+**** Let ''c<sub>n</sub> = sha256(ser<sub>P</sub>(change_shared_secret) || ser<sub>32</sub>(n))''
+**** Let ''C<sub>n</sub> = A<sub>change</sub> + c<sub>n</sub>·G''
+**** Encode ''C<sub>n</sub>'' as a [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot output
+**** Repeat with ''n++'' for additional change outputs
 
 === Receiver ===
 
