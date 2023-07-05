@@ -303,6 +303,70 @@ If using a seed phrase only style backup, the user can recover the wallet's unsp
 
 Silent payments introduces a new address format and protocol for sending and as such is not compatible with older wallet software or wallets which have not implemented the silent payments protocol.
 
+== Test Vectors ==
+
+A [[bip-0340/test-vectors.csv|collection of test vectors in JSON format]] are provided, along with a [[bip-0340/reference.py|python reference implementation]]. Each test vector consists of a sending test case and corresponding receiving test case. This is to allow sending and receiving to be implemented separately. Test cases use the following schema:
+
+''' test_case '''
+
+    {
+        "comment": "Comment describing the behavior being tested",
+        "sending": [<array of sender test objects>],
+        "receiving": [<array of recipient test objects>],
+    }
+
+''' sender '''
+
+    {
+        "given": {
+            "outpoints": [<array of tuples, where each tuple represents an outpoint: (txid, vout)>],
+            "input_priv_keys": [<array of tuples, where each tuple is a hex encoded private key and boolean for taproot: (priv_key, is_taproot)>],
+            "recipients": [<array of tuples, where each tuple is a bech32m string representing a silent payment address and an float amount: (silent_payment_address, amount)>]
+        },
+        "expected": {
+            "outputs": [<array of key, value objects, where the key is the hex encoding of 32-byte x-only public key and the value an integer amount: {taproot_x_only_key: amount}]
+        },
+    }
+
+''' recipient '''
+
+    {
+        "given": {
+            "outpoints": [<array of tuples, where each tuple represents an outpoint: (txid, vout)>],
+            "input_pub_keys": [<array of hex encoded public keys, either 33-byte compressed or 32-byte x-only>],
+            "bip32_seed": "byte data for generating a bip32 master seed",
+            "labels": {<dictionary object, where the key is the hex encoding (33-byte compressed) of m*G and the value is the integer m>},
+         },
+         "expected": {
+             "addresses": [<array of bech32m strings, one for the silent payment address and each labeled address (if used)>],
+             "outputs": [
+                 {
+                     "pub_key": <hex encoded x-only public key>,
+                     "priv_key_teak": <hex encoded private key tweak data>.
+                     "signature": <hex encoded signature for the output (produced with spend_priv_key + priv_key_tweak)>
+                 },
+                 ...
+             ]
+         }
+     }
+
+Wallets should include inputs not in the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' list when testing to ensure that only inputs from the list are being used for shared secret derivation. Additionally, receiving wallets should include non-silent payment outputs for themselves in testing to ensure silent payments scanning does not interfere with regular outputs detection.
+
+=== Functional tests ===
+
+Below is a list of functional tests which should be included in sending and receiving implementations.
+
+==== Sending ====
+
+* Ensure taproot outputs are excluded during coin selection if the sender does not have access to the key path private key (unless using ''H'' as the taproot internal key)
+* Ensure the silent payment address is re-derived if inputs are added or removed during RBF
+
+==== Receiving ====
+
+* Ensure the public key can be extracted from non-standard ''P2PKH'' scriptSigs
+* Ensure taproot script path spends are included, using the taproot output key (unless ''H'' is used as the taproot internal key)
+* Ensure the scanner can extract the public key from each of the input types supported (e.g. ''P2WPKH'', ''P2SH-P2WPKH'', etc)
+
 == Appendix A: Light Client Support ==
 
 This section proposes a few ideas for how light clients could be supported in ways that preserve bandwidth and privacy. While this is out of scope for the current BIP, it is included to movitate further research into this topic. In this context, a light client refers to any bitcoin wallet client which does not process blocks and does not have a direct connection to a node which does process blocks (e.g. a full node). Based on this definition, clients that directly connect to a personal electrum server or a bitcoin node are not light clients.
@@ -345,9 +409,6 @@ A malicious notification could potentially cause the following issues:
 
 Wallet designers can choose which tradeoffs they find appropriate. For example, a wallet could check the block filter to at least probabilistically confirm the likely existence of the UTXO, thus efficiently cutting down on spam. The payment could then be marked as unconfirmed until a scan is performed and the existence of the UTXO in accordance to the silent payment specification is verified.
 
-== Appendix B: Test Vectors ==
-
-TBD
 
 == Acknowledgements ==
 
