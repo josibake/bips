@@ -146,8 +146,40 @@ For everything not defined above, we use the notation from [https://github.com/b
 
 This document defines ''Silent Payments v0''. Version is communicated through the address in the same way as native Segwit addresses. Future upgrades to silent payments will require a new version. As much as possible, future upgrades should support receiving from older wallets (e.g. a silent payments v0 wallet can send to both v0 and v1 addresses). Any changes that break compatibility with older silent payment versions should be a new BIP.
 
-For ''Silent Payments v0'':
+Future Silent Payments versions will use the following versioning scheme:
 
+{| class="wikitable"
+|-
+!
+!0
+!1
+!2
+!3
+!4
+!5
+!6
+!7
+!Compatibility
+|-
+!+0
+|q||p||z||r||y||9||x||8||rowspan="4" | backwards compatible
+|-
+!+8
+|g||f||2||t||v||d||w||0
+|-
+!+16
+|s||3||j||n||5||4||k||h
+|-
+!+24
+|c||e||6||m||u||a||7|| -
+|}
+
+''v31'' (l) is reserved for a backwards incompatible change, if needed. For ''Silent Payments v0'':
+
+* If the receiver's silent payment address version is:
+** ''v0'': check that the data part is exactly 66-bytes. Otherwise, fail
+** ''v1'' through ''v30'': read the first 66-bytes of the data part and discard the remaining bytes (if any)
+** ''v31'': fail
 * Receiver addresses are always [https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki BIP341] taproot outputs<ref name="why_taproot">'''Why only taproot outputs?''' Providing too much optionality for the protocol makes it difficult to implement and can be at odds with the goal of providing the best privacy. Limiting to taproot outputs helps simplify the implementation significantly while also putting users in the best eventual anonymity set.</ref>
 * The sender should sign with one of the sighash flags ''ALL, SINGLE, NONE'' (''ANYONECANPAY'' is unsafe). It is strongly recommended implementations only use ''SIGHASH_ALL'' for silent payments<ref name="why_sighash_all">'''Why recommend ''SIGHASH_ALL''?''' Since the output address for the receiver is derived from from the sum of the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' public keys, the inputs must not change once the sender has signed the transaction. If the inputs are allowed to change after the fact, the receiver will not be able to calculate the shared secret needed to find and spend the output. It is currently an open question on how a future version of silent payments could be made to work with new sighash flags such as ''SIGHASH_GROUP'' and ''SIGHASH_ANYPREVOUT''.</ref>
 * Inputs used to derive the shared secret are from the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' list
