@@ -184,11 +184,16 @@ Future Silent Payments versions will use the following versioning scheme:
 * The sender should sign with one of the sighash flags ''ALL, SINGLE, NONE'' (''ANYONECANPAY'' is unsafe). It is strongly recommended implementations only use ''SIGHASH_ALL'' for silent payments<ref name="why_sighash_all">'''Why recommend ''SIGHASH_ALL''?''' Since the output address for the receiver is derived from from the sum of the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' public keys, the inputs must not change once the sender has signed the transaction. If the inputs are allowed to change after the fact, the receiver will not be able to calculate the shared secret needed to find and spend the output. It is currently an open question on how a future version of silent payments could be made to work with new sighash flags such as ''SIGHASH_GROUP'' and ''SIGHASH_ANYPREVOUT''.</ref>
 * Inputs used to derive the shared secret are from the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' list
 
-A transaction is not a ''Silent Payments v0'' transaction and should be skipped entirely when scanning if any of the following are true:
+=== Scanning transactions ===
 
-* The transaction does not contain any BIP341 taproot outputs
-* The transaction does not have at least one input from the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' list
-* The transaction inputs contain a new, undefined output type (e.g. SegWit versions > 1)<ref name="skip_txs_with_unknown_prevouts">'''Why skip transactions that spend unknown output scripts?''' Skipping transactions that spend unknown output scripts allows us to have a clean upgrade path for Silent Payments by avoiding the need to scan the same transaction multiple times with different rule sets. If a fancy new output type is added in the future and Silent Payments v1 is released with support, we would want to avoid having to first scan the transaction with the silent payment v0 rules and then again with the silent payment v1 rules.</ref>
+A transaction is a ''Silent Payments v0'' transaction and MUST be scanned if and only if all of the following are true:
+
+* The transaction contains at least one BIP341 taproot output
+* The transaction has at least one input from the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' list
+* The transaction does not contain a new, undefined output type (e.g. SegWit versions > 1)<ref name="skip_txs_with_unknown_prevouts">'''Why skip transactions that spend unknown output scripts?''' Skipping transactions that spend unknown output scripts allows us to have a clean upgrade path for Silent Payments by avoiding the need to scan the same transaction multiple times with different rule sets. If a fancy new output type is added in the future and Silent Payments v1 is released with support, we would want to avoid having to first scan the transaction with the silent payment v0 rules and then again with the silent payment v1 rules.</ref>
+* The transaction ''nVersion'' is < 4
+
+Otherwise, skip the transaction. This is to ensure forward compatibility with future versions of silent payments without requiring future versions to scan a transaction multiple times with different rule sets.
 
 === Address encoding ===
 
@@ -256,6 +261,7 @@ The receiver obtains the public key from the ''scriptSig''. The receiver MUST pa
 The sending wallet performs coin selection as usual with the following restrictions:
 
 * At least one input MUST be from the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' list
+* Exclude inputs with witness version > 1 (see ''[[#scanning-transactions|Scanning transactions]]'')
 * For each taproot output spent the sending wallet MUST have access to the private key corresponding to the taproot output key, unless ''H'' is used as the internal public key
 
 ==== Creating outputs ====
@@ -302,7 +308,7 @@ Wallet software MUST use hardened derivation to ensure the master key is not exp
 
 ==== Scanning ====
 
-For each transaction the receiving wallet suspects might be a silent payment to themselves, it must:
+If each of the checks in ''[[#scanning-transactions|Scanning transactions]]'' passes, the receiving wallet must:
 
 * Generate the ''outpoints_hash'', using the method described above
 * Let ''A = A<sub>0</sub> + A<sub>1</sub> + … A<sub>n</sub>'', where each ''A<sub>i</sub>'' is the public key of an input from the ''[[#inputs-for-shared-secret-derivation|Inputs For Shared Secret Derivation]]'' list
