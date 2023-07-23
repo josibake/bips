@@ -174,7 +174,7 @@ if __name__ == "__main__":
             sending_output_pub_keys = [ECPubKey().set(bytes.fromhex(next(iter(p)))) for p in sending_outputs]
 
             # Check that the given inputs for the receiving test match what was generated during the sending test
-            assert outputs_to_check == sending_output_pub_keys, "Receiving test does not match sending test"
+            assert set(sending_output_pub_keys).issubset(set(outputs_to_check)), "Receiving test does not match sending test"
 
             receiving_addresses = []
             b_scan, b_spend, B_scan, B_spend = derive_silent_payment_key_pair(bytes(given["bip32_seed"], "utf-8"))
