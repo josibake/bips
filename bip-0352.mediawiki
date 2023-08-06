@@ -113,8 +113,8 @@ For a single silent payment address of the form ''(B<sub>scan</sub>, B<sub>spend
 
 Alice performs the tweak as before using one of the published ''(B<sub>scan</sub>, B<sub>m</sub>)'' pairs. Bob detects the labeled payment in the following manner:
 
-* Let ''P<sub>0</sub> = B<sub>spend</sub> + hash(outpoints_hash·b<sub>scan</sub>·A || 0)·G''
-* Subtract ''P<sub>0</sub>'' from each of the transaction outputs and check if the remainder matches any of the labels (''1·G'', 2·G'' etc.) that the wallet has previously used
+* Let ''P<sub>n</sub> = B<sub>spend</sub> + hash(outpoints_hash·b<sub>scan</sub>·A || n)·G''
+* Subtract ''P<sub>n</sub>'' from each of the transaction outputs and check if the remainder matches any of the labels (''1·G'', 2·G'' etc.) that the wallet has previously used
 
 It is important to note that an outside observer can easily deduce that each published ''(B<sub>scan</sub>, B<sub>m</sub>)'' pair is owned by the same entity as each published address will have ''B<sub>scan</sub>'' in common. As such, labels are not meant as a way for Bob to manage separate identities, but rather a way for Bob to determine the source of an incoming payment.
 
@@ -421,7 +421,7 @@ Below is a list of functional tests which should be included in sending and rece
 
 == Appendix A: Light Client Support ==
 
-This section proposes a few ideas for how light clients could be supported in ways that preserve bandwidth and privacy. While this is out of scope for the current BIP, it is included to movitate further research into this topic. In this context, a light client refers to any bitcoin wallet client which does not process blocks and does not have a direct connection to a node which does process blocks (e.g. a full node). Based on this definition, clients that directly connect to a personal electrum server or a bitcoin node are not light clients.
+This section proposes a few ideas for how light clients could be supported in ways that preserve bandwidth and privacy. While this is out of scope for the current BIP, it is included to motivate further research into this topic. In this context, a light client refers to any bitcoin wallet client which does not process blocks and does not have a direct connection to a node which does process blocks (e.g. a full node). Based on this definition, clients that directly connect to a personal electrum server or a bitcoin node are not light clients.
 
 This distinction makes the problem for light clients more clear: light clients need a way to source the necessary data for performing the tweaks and a way of determining if any of the generated outputs exist in a block.
 
@@ -468,4 +468,3 @@ This document is the result of many discussions and contains contributions by a 
 
 == Rationale and References ==
 <references/>
-
