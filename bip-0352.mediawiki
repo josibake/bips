@@ -306,15 +306,14 @@ After the inputs have been selected, the sender can create one or more outputs f
 
 ==== Key Derivation ====
 
-Two keys are needed to create a silent payments address: the spend key and the scan key. Wallet software SHOULD use BIP32 hardened derivation<ref name="bip32_derivation">'''Why use BIP32 hardened derivation?''' Using BIP32 derivation allows users to add silent payments to an existing master seed. It also ensures that a user's silent payment funds are recoverable in any wallet which supports BIP32 derivation. Using hardened derivation ensures that it is safe to export the scan private key without exposing the master key or spend private key.</ref> for the spend key and hash it to obtain the scan key.
+Two keys are needed to create a silent payments address: the spend key and the scan key. Wallet software SHOULD use BIP32 hardened derivation<ref name="bip32_derivation">'''Why use BIP32 hardened derivation?''' Using BIP32 derivation allows users to add silent payments to an existing master seed. It also ensures that a user's silent payment funds are recoverable in any BIP32/BIP43 compatible wallet. Using hardened derivation ensures that it is safe to export the scan private key without exposing the master key or spend private key.</ref> for the spend key and hash it to obtain the scan key.
 
 A scan and spend key pair using BIP32 derivation are defined (taking inspiration from [https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki BIP44]) in the following manner:
 
+     scan_private_key: m / purpose' / coin_type' / account' / 1' / 0
+    spend_private_key: m / purpose' / coin_type' / account' / 0' / 0
 
-    spend_private_key: m / purpose' / coin_type' / account' / n
-     scan_private_key: sha256(spend_private_key)
-
-It is recommend that users only have one silent payment address, in which case ''n'' is ''0'', but it can be incremented. Purpose is a constant set to ''352'' following the BIP43 recommendation. Refer to [https://github.com/bitcoin/bips/blob/master/bip-0043.mediawiki BIP43] and [https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki BIP44] for more details.
+`purpose` is a constant set to ''352'' following the BIP43 recommendation. Refer to [https://github.com/bitcoin/bips/blob/master/bip-0043.mediawiki BIP43] and [https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki BIP44] for more details.
 
 ==== Scanning ====
 
