@@ -418,7 +418,7 @@ Below is a list of functional tests which should be included in sending and rece
 
 * Ensure the public key can be extracted from non-standard ''P2PKH'' scriptSigs
 * Ensure taproot script path spends are included, using the taproot output key (unless ''H'' is used as the taproot internal key)
-* Ensure the scanner can extract the public key from each of the input types supported (e.g. ''P2WPKH'', ''P2SH-P2WPKH'', etc)
+* Ensure the scanner can extract the public key from each of the input types supported (e.g. ''P2WPKH'', ''P2SH-P2WPKH'', etc.)
 
 == Appendix A: Light Client Support ==
 
