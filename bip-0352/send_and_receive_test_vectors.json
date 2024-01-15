@@ -1,0 +1,1887 @@
+[
+    {
+        "comment": "Simple send: two inputs",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "483046022100a6b5986a2143d7beb3c431d7b192bbec22b624f2efbb5dfcc658d66a5e41656d022100c70691f451cfec2dae191766fc4beffe6076c248dc3a12bc2ce83569018387f821025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "483046022100cd881ddd58407ed9fcc0beb3c997d2bba75018e7ad64832b8eeb0e397d5ae16e022100e78bbf5e6fbb3eea2c8f18d1e3ce1b921487bbef2f618fff219d133106508e8a2103bd85685d03d111699b15d046319febe77f8de5286e9e512703cdee1bf3be3792",
+                                ""
+                            ],
+                            "scriptPubKey": "76a914d9317c66f54ff0a152ec50b1d19c25be50c8e15988ac",
+                            "private_key": "93f5ed907ad5b2bdbbdcb5d9116ebc0a4e1f92f910d5260237fa45a9408aad16"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            1.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "7f0e387ea0f9ebc9ad4955c39c1c656b709eb2fb420b9b0320bb3f88664deae9",
+                            1.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "483046022100a6b5986a2143d7beb3c431d7b192bbec22b624f2efbb5dfcc658d66a5e41656d022100c70691f451cfec2dae191766fc4beffe6076c248dc3a12bc2ce83569018387f821025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "483046022100cd881ddd58407ed9fcc0beb3c997d2bba75018e7ad64832b8eeb0e397d5ae16e022100e78bbf5e6fbb3eea2c8f18d1e3ce1b921487bbef2f618fff219d133106508e8a2103bd85685d03d111699b15d046319febe77f8de5286e9e512703cdee1bf3be3792",
+                                ""
+                            ],
+                            "scriptPubKey": "76a914d9317c66f54ff0a152ec50b1d19c25be50c8e15988ac"
+                        }
+                    ],
+                    "outputs": [
+                        "7f0e387ea0f9ebc9ad4955c39c1c656b709eb2fb420b9b0320bb3f88664deae9"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": []
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "7f0e387ea0f9ebc9ad4955c39c1c656b709eb2fb420b9b0320bb3f88664deae9",
+                            "priv_key_tweak": "44348f94383ff282dee71d281fe3a122c69a2a2dc0976fb2e7e9613c78c1b19a",
+                            "signature": "7041a38f6c422fdd7bf77335ae8614a6de20b2ff00e496a70b905f17220e9fb002d62043f54d9a4d1a6afce90e26c928734d303be62aaf41bc1bf2731b05dca7"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Simple send: two inputs, order reversed",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "46304402204ea12920c510f9a7b929852abcc1b507c049fd5187a3746bc98106ce3bcaab9d022027c22435c4702cceac9cb964d324079992e114394b7b3ceb4d9461af6cff3dda21025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "47304502207d82b2ecd2b56da78752214eadc3e68135fba894da92729bcb4ff639caa74605022100d27abccc2007fb10d247f7afe6c5f008dd2f2e6ff59c6cf45733214ae4381ed02103bd85685d03d111699b15d046319febe77f8de5286e9e512703cdee1bf3be3792",
+                                ""
+                            ],
+                            "scriptPubKey": "76a914d9317c66f54ff0a152ec50b1d19c25be50c8e15988ac",
+                            "private_key": "93f5ed907ad5b2bdbbdcb5d9116ebc0a4e1f92f910d5260237fa45a9408aad16"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            1.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "7f0e387ea0f9ebc9ad4955c39c1c656b709eb2fb420b9b0320bb3f88664deae9",
+                            1.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "46304402204ea12920c510f9a7b929852abcc1b507c049fd5187a3746bc98106ce3bcaab9d022027c22435c4702cceac9cb964d324079992e114394b7b3ceb4d9461af6cff3dda21025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "47304502207d82b2ecd2b56da78752214eadc3e68135fba894da92729bcb4ff639caa74605022100d27abccc2007fb10d247f7afe6c5f008dd2f2e6ff59c6cf45733214ae4381ed02103bd85685d03d111699b15d046319febe77f8de5286e9e512703cdee1bf3be3792",
+                                ""
+                            ],
+                            "scriptPubKey": "76a914d9317c66f54ff0a152ec50b1d19c25be50c8e15988ac"
+                        }
+                    ],
+                    "outputs": [
+                        "7f0e387ea0f9ebc9ad4955c39c1c656b709eb2fb420b9b0320bb3f88664deae9"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": []
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "7f0e387ea0f9ebc9ad4955c39c1c656b709eb2fb420b9b0320bb3f88664deae9",
+                            "priv_key_tweak": "44348f94383ff282dee71d281fe3a122c69a2a2dc0976fb2e7e9613c78c1b19a",
+                            "signature": "7041a38f6c422fdd7bf77335ae8614a6de20b2ff00e496a70b905f17220e9fb002d62043f54d9a4d1a6afce90e26c928734d303be62aaf41bc1bf2731b05dca7"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Simple send: two inputs from the same transaction",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                3,
+                                "473045022025ec2a44185e3a59fa5f7c44d65a7bf4f3fd900b493e74e78ac25a3454dfe47f022100a13804c1d69843007dce294c37bd63f6e7c9b2ca9a457c497c0862dabac4fd4821025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                7,
+                                "473045022100d3572e04b2167246791018c835588660b1fce9e42f36cc702db697c35dd0c81b022057f3323bb0f588d4bcffdc576a5a9dc667687e11dd57bd1251afd06957c409a22103bd85685d03d111699b15d046319febe77f8de5286e9e512703cdee1bf3be3792",
+                                ""
+                            ],
+                            "scriptPubKey": "76a914d9317c66f54ff0a152ec50b1d19c25be50c8e15988ac",
+                            "private_key": "93f5ed907ad5b2bdbbdcb5d9116ebc0a4e1f92f910d5260237fa45a9408aad16"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            1.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "9143650466b48b9e477c36153ebcfa98a5c0428583ffc498eb9eb0fdff71f395",
+                            1.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                3,
+                                "473045022025ec2a44185e3a59fa5f7c44d65a7bf4f3fd900b493e74e78ac25a3454dfe47f022100a13804c1d69843007dce294c37bd63f6e7c9b2ca9a457c497c0862dabac4fd4821025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                7,
+                                "473045022100d3572e04b2167246791018c835588660b1fce9e42f36cc702db697c35dd0c81b022057f3323bb0f588d4bcffdc576a5a9dc667687e11dd57bd1251afd06957c409a22103bd85685d03d111699b15d046319febe77f8de5286e9e512703cdee1bf3be3792",
+                                ""
+                            ],
+                            "scriptPubKey": "76a914d9317c66f54ff0a152ec50b1d19c25be50c8e15988ac"
+                        }
+                    ],
+                    "outputs": [
+                        "9143650466b48b9e477c36153ebcfa98a5c0428583ffc498eb9eb0fdff71f395"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": []
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "9143650466b48b9e477c36153ebcfa98a5c0428583ffc498eb9eb0fdff71f395",
+                            "priv_key_tweak": "45e357513a2e82eb2f8d3d466b9cb66ef4031b672ee3a76ac1d4a3fd6ae1eea9",
+                            "signature": "621ae10afffd794f1c0b59da3264a1b4470c7ea9aff22bbd29d9c319dac05834860789f4c9edb139714230f1f4b7ae5f9191cce106284f7221097f65cfd5ef9d"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Simple send: two inputs from the same transaction, order reversed",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                7,
+                                "47304502200f3cbea3a383b6971e819e2d63e8c98eef00d1c89bfbbd9bb18ad0d0f1f93e16022100fa8666adde790d622601eb13eec1aff27a7688bf52b9138500946916fe19f8ee21025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                3,
+                                "46304402206a48da9ff8c23169ec7fac46254994978223efe8a13e8f7fb1d9ad026452b5af02206d6cb662b08597665acfd7511d7ad90b6f3679ed55a6fe37db05b99dd5961a7a2103bd85685d03d111699b15d046319febe77f8de5286e9e512703cdee1bf3be3792",
+                                ""
+                            ],
+                            "scriptPubKey": "76a914d9317c66f54ff0a152ec50b1d19c25be50c8e15988ac",
+                            "private_key": "93f5ed907ad5b2bdbbdcb5d9116ebc0a4e1f92f910d5260237fa45a9408aad16"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            1.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "4dbeac765ae35d74a5a3b0de21c905aa72cb00c927dd16a0be546e8a71a3220a",
+                            1.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                7,
+                                "47304502200f3cbea3a383b6971e819e2d63e8c98eef00d1c89bfbbd9bb18ad0d0f1f93e16022100fa8666adde790d622601eb13eec1aff27a7688bf52b9138500946916fe19f8ee21025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                3,
+                                "46304402206a48da9ff8c23169ec7fac46254994978223efe8a13e8f7fb1d9ad026452b5af02206d6cb662b08597665acfd7511d7ad90b6f3679ed55a6fe37db05b99dd5961a7a2103bd85685d03d111699b15d046319febe77f8de5286e9e512703cdee1bf3be3792",
+                                ""
+                            ],
+                            "scriptPubKey": "76a914d9317c66f54ff0a152ec50b1d19c25be50c8e15988ac"
+                        }
+                    ],
+                    "outputs": [
+                        "4dbeac765ae35d74a5a3b0de21c905aa72cb00c927dd16a0be546e8a71a3220a"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": []
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "4dbeac765ae35d74a5a3b0de21c905aa72cb00c927dd16a0be546e8a71a3220a",
+                            "priv_key_tweak": "2cbefe5efa9fd262d6bf5a3cd20b68d31e2d95affd8c852c21151cab4f6c1842",
+                            "signature": "2a07a15f3f12c225a8969578a7b4610966c3f8b37259661342a5feb8baa384e8eb13d6dc9a6b72f664483c410506a7e4e8572e663a048eb1dbd48830df96d928"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Single recipient: multiple UTXOs from the same public key",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022100fb8b178739a78f27675bc29bf761092396796ea46bb7ce4eb16eae6af40d0b7c02207128fd37978b5f87bcc4b3140ec37f76ba298aeac19610ecdf0d98584022b41e21025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "473045022100d2273c82a0f82a5cfb344333c9c2b28e3949103f264238decbab02a97bc170e302207b63373cb9038b9ea74dc1fcb629cfcd44ca3433c51884ab84980b999388afee21025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            1.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "d87492c685f0949b8984355507f082a224ceee656d5379f25b57960d1766f5c2",
+                            1.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022100fb8b178739a78f27675bc29bf761092396796ea46bb7ce4eb16eae6af40d0b7c02207128fd37978b5f87bcc4b3140ec37f76ba298aeac19610ecdf0d98584022b41e21025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "473045022100d2273c82a0f82a5cfb344333c9c2b28e3949103f264238decbab02a97bc170e302207b63373cb9038b9ea74dc1fcb629cfcd44ca3433c51884ab84980b999388afee21025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        }
+                    ],
+                    "outputs": [
+                        "d87492c685f0949b8984355507f082a224ceee656d5379f25b57960d1766f5c2"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": []
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "d87492c685f0949b8984355507f082a224ceee656d5379f25b57960d1766f5c2",
+                            "priv_key_tweak": "c6728fa20e4e250569c3c6527663a6af28e037196a1025bf4783ef743764042f",
+                            "signature": "2166d84fd52fb6332da41aabf6f3e7fbdefd7fc54b4778358fbd6a2d332f75ea96c12521cd977b672ad7d491d5be85c5c22c4103f588213a95d76c5a68870011"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Single recipient: taproot only inputs with even y-values",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "",
+                                "0140c459b671370d12cfb5acee76da7e3ba7cc29b0b4653e3af8388591082660137d087fdc8e89a612cd5d15be0febe61fc7cdcf3161a26e599a4514aa5c3e86f47b"
+                            ],
+                            "scriptPubKey": "51205a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "",
+                                "0140bd1e708f92dbeaf24a6b8dd22e59c6274355424d62baea976b449e220fd75b13578e262ab11b7aa58e037f0c6b0519b66803b7d9decaa1906dedebfb531c56c1"
+                            ],
+                            "scriptPubKey": "5120782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                            "private_key": "fc8716a97a48ba9a05a98ae47b5cd201a25a7fd5d8b73c203c5f7b6b6b3b6ad7"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            1.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "569808b1f30d9545a96f5daa2b606a738f9e9dc0fb93fd8725d9074fc49bd96a",
+                            1.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "",
+                                "0140c459b671370d12cfb5acee76da7e3ba7cc29b0b4653e3af8388591082660137d087fdc8e89a612cd5d15be0febe61fc7cdcf3161a26e599a4514aa5c3e86f47b"
+                            ],
+                            "scriptPubKey": "51205a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "",
+                                "0140bd1e708f92dbeaf24a6b8dd22e59c6274355424d62baea976b449e220fd75b13578e262ab11b7aa58e037f0c6b0519b66803b7d9decaa1906dedebfb531c56c1"
+                            ],
+                            "scriptPubKey": "5120782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338"
+                        }
+                    ],
+                    "outputs": [
+                        "569808b1f30d9545a96f5daa2b606a738f9e9dc0fb93fd8725d9074fc49bd96a"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": []
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "569808b1f30d9545a96f5daa2b606a738f9e9dc0fb93fd8725d9074fc49bd96a",
+                            "priv_key_tweak": "20136ed427b2360406220950c5aa412876305d3a4300f48a4478a5d99d42b9bf",
+                            "signature": "3996845049944868c0ae3ce31f7c1394294caf04075a1d4aa3d0ad2d38208353179d9d301c813f20208911734f765f8d632804a1d58eb6dfc6d50017a3b7d99d"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Single recipient: taproot only with mixed even/odd y-values",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "",
+                                "0140c459b671370d12cfb5acee76da7e3ba7cc29b0b4653e3af8388591082660137d087fdc8e89a612cd5d15be0febe61fc7cdcf3161a26e599a4514aa5c3e86f47b"
+                            ],
+                            "scriptPubKey": "51205a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "",
+                                "01400a4d0dca6293f40499394d7eefe14a1de11e0e3454f51de2e802592abf5ee549042a1b1a8fb2e149ee9dd3f086c1b69b2f182565ab6ecf599b1ec9ebadfda6c5"
+                            ],
+                            "scriptPubKey": "51208c8d23d4764feffcd5e72e380802540fa0f88e3d62ad5e0b47955f74d7b283c4",
+                            "private_key": "1d37787c2b7116ee983e9f9c13269df29091b391c04db94239e0d2bc2182c3bf"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            1.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "856c6088f3de9d44f6823fe11d69c3294d7eb18281217ecd4ff45e7abb17127c",
+                            1.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "",
+                                "0140c459b671370d12cfb5acee76da7e3ba7cc29b0b4653e3af8388591082660137d087fdc8e89a612cd5d15be0febe61fc7cdcf3161a26e599a4514aa5c3e86f47b"
+                            ],
+                            "scriptPubKey": "51205a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "",
+                                "01400a4d0dca6293f40499394d7eefe14a1de11e0e3454f51de2e802592abf5ee549042a1b1a8fb2e149ee9dd3f086c1b69b2f182565ab6ecf599b1ec9ebadfda6c5"
+                            ],
+                            "scriptPubKey": "51208c8d23d4764feffcd5e72e380802540fa0f88e3d62ad5e0b47955f74d7b283c4"
+                        }
+                    ],
+                    "outputs": [
+                        "856c6088f3de9d44f6823fe11d69c3294d7eb18281217ecd4ff45e7abb17127c"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": []
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "856c6088f3de9d44f6823fe11d69c3294d7eb18281217ecd4ff45e7abb17127c",
+                            "priv_key_tweak": "991389ce6e2fd5d491c047323fff87aaca8f9b4c8712085679a068b632e71435",
+                            "signature": "280bd12fd4a213e97d24280220fd564b48bfdf943b8b08d774de0509c2edbe9c6bd339193d64176f4917d391d10fa1fd6ef6d89ebe78a8f02918261cfb4bf750"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Single recipient: taproot input with even y-value and non-taproot input",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "",
+                                "0140c459b671370d12cfb5acee76da7e3ba7cc29b0b4653e3af8388591082660137d087fdc8e89a612cd5d15be0febe61fc7cdcf3161a26e599a4514aa5c3e86f47b"
+                            ],
+                            "scriptPubKey": "51205a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "473045022003bb1d4ea47105344c1f603c65c25d988e605b79c3f8d9f562cf034ea12c173c022100bea7ab487d2de4ed0e9b699577837001166066acdc46f9e5eb19e839da65aac72103e0ec4f64b3fa2e463ccfcf4e856e37d5e1e20275bc89ec1def9eb098eff1f85d",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9148cbc7dfe44f1579bff3340bbef1eddeaeb1fc97788ac",
+                            "private_key": "8d4751f6e8a3586880fb66c19ae277969bd5aa06f61c4ee2f1e2486efdf666d3"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            1.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "39dc1b0f9226f22daccda2e0c593ab4243889f73d9554f4465ba7dfd552c6672",
+                            1.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "",
+                                "0140c459b671370d12cfb5acee76da7e3ba7cc29b0b4653e3af8388591082660137d087fdc8e89a612cd5d15be0febe61fc7cdcf3161a26e599a4514aa5c3e86f47b"
+                            ],
+                            "scriptPubKey": "51205a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "473045022003bb1d4ea47105344c1f603c65c25d988e605b79c3f8d9f562cf034ea12c173c022100bea7ab487d2de4ed0e9b699577837001166066acdc46f9e5eb19e839da65aac72103e0ec4f64b3fa2e463ccfcf4e856e37d5e1e20275bc89ec1def9eb098eff1f85d",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9148cbc7dfe44f1579bff3340bbef1eddeaeb1fc97788ac"
+                        }
+                    ],
+                    "outputs": [
+                        "39dc1b0f9226f22daccda2e0c593ab4243889f73d9554f4465ba7dfd552c6672"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": []
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "39dc1b0f9226f22daccda2e0c593ab4243889f73d9554f4465ba7dfd552c6672",
+                            "priv_key_tweak": "66cf5461b2c8501bc2593182a6d92cfdad88bb2129bed4216dc9aa965b87f2fc",
+                            "signature": "3a700319a56d280ef3460324a016f7c817587d60d26d192226e82c4ea0fd46645566bc3cfb956756aa04521905288a3942a10dd115f228654f5e6f326481a172"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Single recipient: taproot input with odd y-value and non-taproot input",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "",
+                                "01400a4d0dca6293f40499394d7eefe14a1de11e0e3454f51de2e802592abf5ee549042a1b1a8fb2e149ee9dd3f086c1b69b2f182565ab6ecf599b1ec9ebadfda6c5"
+                            ],
+                            "scriptPubKey": "51208c8d23d4764feffcd5e72e380802540fa0f88e3d62ad5e0b47955f74d7b283c4",
+                            "private_key": "1d37787c2b7116ee983e9f9c13269df29091b391c04db94239e0d2bc2182c3bf"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "48304602210086115b1d327cbe99fdc20c280f2a5ab6f358b2caa5e557c827d7bdf7f170924d0221009663105709c2f39f516896c185bbf583e9f12a3d75606254c2c761dad08fdcd42103e0ec4f64b3fa2e463ccfcf4e856e37d5e1e20275bc89ec1def9eb098eff1f85d",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9148cbc7dfe44f1579bff3340bbef1eddeaeb1fc97788ac",
+                            "private_key": "8d4751f6e8a3586880fb66c19ae277969bd5aa06f61c4ee2f1e2486efdf666d3"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            1.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "e02a5a320697649bfd7bdd2eea80ae117dec20e23489947a5a2024de69dbbdb2",
+                            1.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "",
+                                "01400a4d0dca6293f40499394d7eefe14a1de11e0e3454f51de2e802592abf5ee549042a1b1a8fb2e149ee9dd3f086c1b69b2f182565ab6ecf599b1ec9ebadfda6c5"
+                            ],
+                            "scriptPubKey": "51208c8d23d4764feffcd5e72e380802540fa0f88e3d62ad5e0b47955f74d7b283c4"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "48304602210086115b1d327cbe99fdc20c280f2a5ab6f358b2caa5e557c827d7bdf7f170924d0221009663105709c2f39f516896c185bbf583e9f12a3d75606254c2c761dad08fdcd42103e0ec4f64b3fa2e463ccfcf4e856e37d5e1e20275bc89ec1def9eb098eff1f85d",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9148cbc7dfe44f1579bff3340bbef1eddeaeb1fc97788ac"
+                        }
+                    ],
+                    "outputs": [
+                        "e02a5a320697649bfd7bdd2eea80ae117dec20e23489947a5a2024de69dbbdb2"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": []
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "e02a5a320697649bfd7bdd2eea80ae117dec20e23489947a5a2024de69dbbdb2",
+                            "priv_key_tweak": "dd66d74bd2ee8cb01a4b024313f279920de01dda5f515ae9a54bc031dbfcd1dc",
+                            "signature": "092c57002a5e5d465440da20689416834d956e3f5f4b610c470bfc0815cdab27c62051c78f6d0575d309760788e32b07bfc4cfb5e942bfefe69356452b1813f5"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Multiple outputs: multiple outputs, same recipient",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022100954340a90888fb4e5f0af3df70989f44f8a2e6a91319622734b352a6f3a37f61022006f2a219b19bb3daeeb7d1608293a4937f7fc0a661f9941189311d4711efd50621025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "46304402202858b6ffb1ba1738e87876abb9f0977369bb151606cb3bb3d335819d4b515bdf02206adf930fd3278cf1bb7af6c9537bcc3c3106c6c742f38c0796ead37470cce7052103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac",
+                            "private_key": "0378e95685b74565fa56751b84a32dfd18545d10d691641b8372e32164fad66a"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            2.0
+                        ],
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            3.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                            2.0
+                        ],
+                        [
+                            "c79b7e78c0525306e5306c45e5efbea768cb1caa546c0345cb0c9553f0f6a89c",
+                            3.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022100954340a90888fb4e5f0af3df70989f44f8a2e6a91319622734b352a6f3a37f61022006f2a219b19bb3daeeb7d1608293a4937f7fc0a661f9941189311d4711efd50621025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "46304402202858b6ffb1ba1738e87876abb9f0977369bb151606cb3bb3d335819d4b515bdf02206adf930fd3278cf1bb7af6c9537bcc3c3106c6c742f38c0796ead37470cce7052103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac"
+                        }
+                    ],
+                    "outputs": [
+                        "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                        "c79b7e78c0525306e5306c45e5efbea768cb1caa546c0345cb0c9553f0f6a89c",
+                        "96b0690eeffb9caf329ff74dd7f564113352f3d98c5bd8e2dde17e1f9fa0da57",
+                        "4885fc5028ec177827ea0ae1064be659a5b2b692badd25ae17565e4cc48c2775"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": []
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                            "priv_key_tweak": "f990515fa92c9baa6504697d2ee1eec7e8320308490a53a6add12493ef96953c",
+                            "signature": "01322e61146a5dccaa246408289c4a48e4d332c74ab47a475fcaa95019a622d1b52a4c9d14af1c85afdb6a0e730e5cfd06cc8c2181aa14f78166ea70d710d76c"
+                        },
+                        {
+                            "pub_key": "c79b7e78c0525306e5306c45e5efbea768cb1caa546c0345cb0c9553f0f6a89c",
+                            "priv_key_tweak": "aec9012d47d6d2f653a8f9d1f03c54a8113df7d649b11b3dd3a4c38cfbb5eb95",
+                            "signature": "232ad9c93e4a9222b0aaab9a5087ac22cb7b453784357126fdcb204ab52b6ea4a47418d5a6045753af37290f3b2f2f69969e8822b5c0d1cd87f179d306c85341"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Multiple outputs: multiple outputs, multiple recipients",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022100954340a90888fb4e5f0af3df70989f44f8a2e6a91319622734b352a6f3a37f61022006f2a219b19bb3daeeb7d1608293a4937f7fc0a661f9941189311d4711efd50621025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "46304402202858b6ffb1ba1738e87876abb9f0977369bb151606cb3bb3d335819d4b515bdf02206adf930fd3278cf1bb7af6c9537bcc3c3106c6c742f38c0796ead37470cce7052103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac",
+                            "private_key": "0378e95685b74565fa56751b84a32dfd18545d10d691641b8372e32164fad66a"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            2.0
+                        ],
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            3.0
+                        ],
+                        [
+                            "sp1qqgrz6j0lcqnc04vxccydl0kpsj4frfje0ktmgcl2t346hkw30226xqupawdf48k8882j0strrvcmgg2kdawz53a54dd376ngdhak364hzcmynqtn",
+                            4.0
+                        ],
+                        [
+                            "sp1qqgrz6j0lcqnc04vxccydl0kpsj4frfje0ktmgcl2t346hkw30226xqupawdf48k8882j0strrvcmgg2kdawz53a54dd376ngdhak364hzcmynqtn",
+                            5.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                            2.0
+                        ],
+                        [
+                            "c79b7e78c0525306e5306c45e5efbea768cb1caa546c0345cb0c9553f0f6a89c",
+                            3.0
+                        ],
+                        [
+                            "96b0690eeffb9caf329ff74dd7f564113352f3d98c5bd8e2dde17e1f9fa0da57",
+                            4.0
+                        ],
+                        [
+                            "4885fc5028ec177827ea0ae1064be659a5b2b692badd25ae17565e4cc48c2775",
+                            5.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022100954340a90888fb4e5f0af3df70989f44f8a2e6a91319622734b352a6f3a37f61022006f2a219b19bb3daeeb7d1608293a4937f7fc0a661f9941189311d4711efd50621025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "46304402202858b6ffb1ba1738e87876abb9f0977369bb151606cb3bb3d335819d4b515bdf02206adf930fd3278cf1bb7af6c9537bcc3c3106c6c742f38c0796ead37470cce7052103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac"
+                        }
+                    ],
+                    "outputs": [
+                        "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                        "c79b7e78c0525306e5306c45e5efbea768cb1caa546c0345cb0c9553f0f6a89c",
+                        "96b0690eeffb9caf329ff74dd7f564113352f3d98c5bd8e2dde17e1f9fa0da57",
+                        "4885fc5028ec177827ea0ae1064be659a5b2b692badd25ae17565e4cc48c2775"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": []
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                            "priv_key_tweak": "f990515fa92c9baa6504697d2ee1eec7e8320308490a53a6add12493ef96953c",
+                            "signature": "01322e61146a5dccaa246408289c4a48e4d332c74ab47a475fcaa95019a622d1b52a4c9d14af1c85afdb6a0e730e5cfd06cc8c2181aa14f78166ea70d710d76c"
+                        },
+                        {
+                            "pub_key": "c79b7e78c0525306e5306c45e5efbea768cb1caa546c0345cb0c9553f0f6a89c",
+                            "priv_key_tweak": "aec9012d47d6d2f653a8f9d1f03c54a8113df7d649b11b3dd3a4c38cfbb5eb95",
+                            "signature": "232ad9c93e4a9222b0aaab9a5087ac22cb7b453784357126fdcb204ab52b6ea4a47418d5a6045753af37290f3b2f2f69969e8822b5c0d1cd87f179d306c85341"
+                        }
+                    ]
+                }
+            },
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022100954340a90888fb4e5f0af3df70989f44f8a2e6a91319622734b352a6f3a37f61022006f2a219b19bb3daeeb7d1608293a4937f7fc0a661f9941189311d4711efd50621025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "46304402202858b6ffb1ba1738e87876abb9f0977369bb151606cb3bb3d335819d4b515bdf02206adf930fd3278cf1bb7af6c9537bcc3c3106c6c742f38c0796ead37470cce7052103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac"
+                        }
+                    ],
+                    "outputs": [
+                        "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                        "c79b7e78c0525306e5306c45e5efbea768cb1caa546c0345cb0c9553f0f6a89c",
+                        "96b0690eeffb9caf329ff74dd7f564113352f3d98c5bd8e2dde17e1f9fa0da57",
+                        "4885fc5028ec177827ea0ae1064be659a5b2b692badd25ae17565e4cc48c2775"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9902c3c56e84002a7cd410113a9ab21d142be7f53cf5200720bb01314c5eb920",
+                        "scan_priv_key": "060b751d7892149006ed7b98606955a29fe284a1e900070c0971f5fb93dbf422"
+                    },
+                    "labels": []
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgrz6j0lcqnc04vxccydl0kpsj4frfje0ktmgcl2t346hkw30226xqupawdf48k8882j0strrvcmgg2kdawz53a54dd376ngdhak364hzcmynqtn"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "96b0690eeffb9caf329ff74dd7f564113352f3d98c5bd8e2dde17e1f9fa0da57",
+                            "priv_key_tweak": "1614cf8a3f693374e88eade93a0631842b40312d35b514c1306435e6fabcd6a8",
+                            "signature": "1a781d6a54005cd5c72d2352dacfa3c9303aed77f8c2b140e1da57fcebfc84f944c22091e7c19f8098b3135a2dc6b0987432f56270397e6d557748f903c03d11"
+                        },
+                        {
+                            "pub_key": "4885fc5028ec177827ea0ae1064be659a5b2b692badd25ae17565e4cc48c2775",
+                            "priv_key_tweak": "b9e83c746123d572ed75b742c0fa9da77b9ef5273cede419718f6ed00d0bb4e9",
+                            "signature": "df4cd62c311602716d819e18111d4482c2343cb03c9e66092a700e016a3ca6d95665d5e1d58f5a50482189a9fcec158a47023656a924302d2699c1cfdf973753"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Receiving with labels: label with odd parity",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "4830460221008066df7a28396408ac5f63ea212dbf10375cf2b7c782796d217013f202e4c6d0022100849d255d0867c3e3b2a679945c2c9133d398048d9f751895509eea28f684c24421025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "47304502201963a4f89f012b2eb5fb3130c083ceb268a8f19bd609bdd1611cea196cc9fc40022100feead4e7b001db92d068d3f19091fd7243d6481fddd5f86660984d6ada8a99432103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac",
+                            "private_key": "0378e95685b74565fa56751b84a32dfd18545d10d691641b8372e32164fad66a"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqlqtzs0rexz7dksqyr5e9nqv6ym3j4p4a2hkpv55f4yccjzhz6wu5adxu0e",
+                            1.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "35bd8540cb41761b9848dbfe6c8edb2350ac8f7dec94e511c8365a9d4be7e711",
+                            1.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "4830460221008066df7a28396408ac5f63ea212dbf10375cf2b7c782796d217013f202e4c6d0022100849d255d0867c3e3b2a679945c2c9133d398048d9f751895509eea28f684c24421025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "47304502201963a4f89f012b2eb5fb3130c083ceb268a8f19bd609bdd1611cea196cc9fc40022100feead4e7b001db92d068d3f19091fd7243d6481fddd5f86660984d6ada8a99432103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac"
+                        }
+                    ],
+                    "outputs": [
+                        "35bd8540cb41761b9848dbfe6c8edb2350ac8f7dec94e511c8365a9d4be7e711"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": [
+                        2,
+                        3,
+                        1001337
+                    ]
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqlqtzs0rexz7dksqyr5e9nqv6ym3j4p4a2hkpv55f4yccjzhz6wu5adxu0e",
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgq60n0kvxr0lck9rlw7r5rdez5u4c5fqvrppct9plnzcnppp3cfa8c7ts0xh",
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqmghhc39w7u5v3kvtl7lgna2dhjr4wlamrvmd3d3edw0u6jzd7xvu5wjgul"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "35bd8540cb41761b9848dbfe6c8edb2350ac8f7dec94e511c8365a9d4be7e711",
+                            "priv_key_tweak": "62aa6e447d324d1549aadfcb4a059ffcad09dd6d178a9e474501a3ac39a0e17b",
+                            "signature": "25340d843e2734e5693a91d0292e2b27fcff1f141168a33e6e2a0146f7eb9edb0e292ca2522e29427c39dcc87747dd3883c0878241e1abaf13174b25fecb5bcf"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Receiving with labels: label with odd parity",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022030592547ec33661bebaf2f8903e0e2bab1dd39799bafdebf23c7c405c818ac3e022100fb7f7af1e26dbd4c703d43cfc082c18a795115d880440d181746d34b5c2847f521025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "473045022076685024a6a149076e57391cedacfa59de8d7ca0003e9134cb26aa006f099419022100863892321305eda8f2a72ce81bc815d0ebe8ab464d5502dc8e66ba73fa80e3842103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac",
+                            "private_key": "0378e95685b74565fa56751b84a32dfd18545d10d691641b8372e32164fad66a"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgq60n0kvxr0lck9rlw7r5rdez5u4c5fqvrppct9plnzcnppp3cfa8c7ts0xh",
+                            1.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "7a6862be9614902a6f3efd70bd3126a54cbec075241a5b5fc612953aa526af70",
+                            1.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022030592547ec33661bebaf2f8903e0e2bab1dd39799bafdebf23c7c405c818ac3e022100fb7f7af1e26dbd4c703d43cfc082c18a795115d880440d181746d34b5c2847f521025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "473045022076685024a6a149076e57391cedacfa59de8d7ca0003e9134cb26aa006f099419022100863892321305eda8f2a72ce81bc815d0ebe8ab464d5502dc8e66ba73fa80e3842103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac"
+                        }
+                    ],
+                    "outputs": [
+                        "7a6862be9614902a6f3efd70bd3126a54cbec075241a5b5fc612953aa526af70"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": [
+                        2,
+                        3,
+                        1001337
+                    ]
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqlqtzs0rexz7dksqyr5e9nqv6ym3j4p4a2hkpv55f4yccjzhz6wu5adxu0e",
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgq60n0kvxr0lck9rlw7r5rdez5u4c5fqvrppct9plnzcnppp3cfa8c7ts0xh",
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqmghhc39w7u5v3kvtl7lgna2dhjr4wlamrvmd3d3edw0u6jzd7xvu5wjgul"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "7a6862be9614902a6f3efd70bd3126a54cbec075241a5b5fc612953aa526af70",
+                            "priv_key_tweak": "d95cb02470e00c19f54c0138eb55fa7719665fbd1123c1cc8e55d11aea2f7eac",
+                            "signature": "4d609efb766640125e1b39290cc7bac128c1f157b989556e1a5ad16eec5ae3d9fc265a0b8d0184900cdeda184484e6868ba06856613227049f6e127ddd4af8c7"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Receiving with labels: label with odd parity",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "47304502204d646f77229d9df97ac6fec83cc09342d88eb1cb49b1d7e2562d435e9aed9e10022100c3380e8f7a0aa240fc6d7c1c14d8247acc2a6434b63bc09c6eaa7adbe9ad779e21025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "47304502206a52823add6f964a02580a3d81f9ce3e245089c8188ff10b40dd58a4a40a8bf7022100a2fe6500632b9074cfb1465f6f8305562f8caee001705112898ab4bf58273b212103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac",
+                            "private_key": "0378e95685b74565fa56751b84a32dfd18545d10d691641b8372e32164fad66a"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqmghhc39w7u5v3kvtl7lgna2dhjr4wlamrvmd3d3edw0u6jzd7xvu5wjgul",
+                            1.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "a9fd32c0d5860d1423df49c26b3c7f2af7581e3c021504a4a1f650fbd28b1405",
+                            1.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "47304502204d646f77229d9df97ac6fec83cc09342d88eb1cb49b1d7e2562d435e9aed9e10022100c3380e8f7a0aa240fc6d7c1c14d8247acc2a6434b63bc09c6eaa7adbe9ad779e21025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "47304502206a52823add6f964a02580a3d81f9ce3e245089c8188ff10b40dd58a4a40a8bf7022100a2fe6500632b9074cfb1465f6f8305562f8caee001705112898ab4bf58273b212103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac"
+                        }
+                    ],
+                    "outputs": [
+                        "a9fd32c0d5860d1423df49c26b3c7f2af7581e3c021504a4a1f650fbd28b1405"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": [
+                        2,
+                        3,
+                        1001337
+                    ]
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqlqtzs0rexz7dksqyr5e9nqv6ym3j4p4a2hkpv55f4yccjzhz6wu5adxu0e",
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgq60n0kvxr0lck9rlw7r5rdez5u4c5fqvrppct9plnzcnppp3cfa8c7ts0xh",
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqmghhc39w7u5v3kvtl7lgna2dhjr4wlamrvmd3d3edw0u6jzd7xvu5wjgul"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "a9fd32c0d5860d1423df49c26b3c7f2af7581e3c021504a4a1f650fbd28b1405",
+                            "priv_key_tweak": "d85096c6a8c5a444d7a7de42a2066d2039cd27ed7b946224f5fd2887c9169f31",
+                            "signature": "a485d8d829d490326d4d7b95b1e732db0b8effd61768dc26f71528702eab89c13a00359e07c0ea8b6291d1e4c10761f2d851f72c612b04ce847db88c63b7ec56"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Multiple outputs with labels: multiple outputs for labeled address; same recipient",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022100f5b04afadbb2dd5d0ba02e01de8f38e3511df436907229586181f4ec0cb28a57022037389e4d569e69a3acf68637b0ef97448da697bf0e67840418ee11a0326ad9f721025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "473045022048773219ae8f24ea5b476a27e3a7b897fc364fc16d7468afde57640d028b729e022100dc15e213c0afd19f15cf0c3aa7d20ae17a18141356905986faac5587ad81ee2f2103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac",
+                            "private_key": "0378e95685b74565fa56751b84a32dfd18545d10d691641b8372e32164fad66a"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            1.0
+                        ],
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgq5xznr7q7va9qqya76gktf32k2a9q7urxyh6pr9wj3a96p8960cyqtdrdl0",
+                            2.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                            1.0
+                        ],
+                        [
+                            "6a03e0353d94a5da5af238c1ce8c3740815e7920d385d139e14b4cc35901e388",
+                            2.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022100f5b04afadbb2dd5d0ba02e01de8f38e3511df436907229586181f4ec0cb28a57022037389e4d569e69a3acf68637b0ef97448da697bf0e67840418ee11a0326ad9f721025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "473045022048773219ae8f24ea5b476a27e3a7b897fc364fc16d7468afde57640d028b729e022100dc15e213c0afd19f15cf0c3aa7d20ae17a18141356905986faac5587ad81ee2f2103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac"
+                        }
+                    ],
+                    "outputs": [
+                        "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                        "6a03e0353d94a5da5af238c1ce8c3740815e7920d385d139e14b4cc35901e388"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": [
+                        1
+                    ]
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgq5xznr7q7va9qqya76gktf32k2a9q7urxyh6pr9wj3a96p8960cyqtdrdl0"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                            "priv_key_tweak": "f990515fa92c9baa6504697d2ee1eec7e8320308490a53a6add12493ef96953c",
+                            "signature": "01322e61146a5dccaa246408289c4a48e4d332c74ab47a475fcaa95019a622d1b52a4c9d14af1c85afdb6a0e730e5cfd06cc8c2181aa14f78166ea70d710d76c"
+                        },
+                        {
+                            "pub_key": "6a03e0353d94a5da5af238c1ce8c3740815e7920d385d139e14b4cc35901e388",
+                            "priv_key_tweak": "0d6cfa12865975792f1a88fb5c374c4b07e56e90d49b18de5be21e5d3fca96aa",
+                            "signature": "6e4a69742589439edfab678fe7017f94c46b2082ef2dc7c2da946a24c981187dce73ef0a91f16b6048c64c42f5537211b21ce3d4fdef58377eeabfb9ad64ef41"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Multiple outputs with labels: multiple outputs for labeled address; same recipient",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022100f0648dc1e97c7d075016789fc8105073458d0e1596b61baeecd23e4118a8224602206f0f823ebf8923e35cdff71435d69da4e6eff9ccc419e19afdc5b1d35ecee4c521025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "47304502206ff65484962a2af9c367c4adb4569d86e0c66d651aeb027b8074882848e4cb67022100c10ca811d9e4686a27cb2dde31541b306102993273f30ff6e79b890134e6553f2103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac",
+                            "private_key": "0378e95685b74565fa56751b84a32dfd18545d10d691641b8372e32164fad66a"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgq5xznr7q7va9qqya76gktf32k2a9q7urxyh6pr9wj3a96p8960cyqtdrdl0",
+                            3.0
+                        ],
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgq5xznr7q7va9qqya76gktf32k2a9q7urxyh6pr9wj3a96p8960cyqtdrdl0",
+                            4.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "6e22e71d7cac7de425f5edd570b1645564eda24f1c986f9d4004cb17f70eaebd",
+                            3.0
+                        ],
+                        [
+                            "6a03e0353d94a5da5af238c1ce8c3740815e7920d385d139e14b4cc35901e388",
+                            4.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022100f0648dc1e97c7d075016789fc8105073458d0e1596b61baeecd23e4118a8224602206f0f823ebf8923e35cdff71435d69da4e6eff9ccc419e19afdc5b1d35ecee4c521025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "47304502206ff65484962a2af9c367c4adb4569d86e0c66d651aeb027b8074882848e4cb67022100c10ca811d9e4686a27cb2dde31541b306102993273f30ff6e79b890134e6553f2103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac"
+                        }
+                    ],
+                    "outputs": [
+                        "6e22e71d7cac7de425f5edd570b1645564eda24f1c986f9d4004cb17f70eaebd",
+                        "6a03e0353d94a5da5af238c1ce8c3740815e7920d385d139e14b4cc35901e388"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": [
+                        1
+                    ]
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgq5xznr7q7va9qqya76gktf32k2a9q7urxyh6pr9wj3a96p8960cyqtdrdl0"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "6e22e71d7cac7de425f5edd570b1645564eda24f1c986f9d4004cb17f70eaebd",
+                            "priv_key_tweak": "58344a44e7af3e2d4075f8a69adce66aded979c2d3f45147360e7f6433ab4051",
+                            "signature": "14a92dfbe543c53e7a9498e177589720296932e8b04abdd3c7de0a2827a73e99f082e2004e4ab49cfe2ebf83f067614d19bfdb0130fe78a9eb87f81477992ef2"
+                        },
+                        {
+                            "pub_key": "6a03e0353d94a5da5af238c1ce8c3740815e7920d385d139e14b4cc35901e388",
+                            "priv_key_tweak": "0d6cfa12865975792f1a88fb5c374c4b07e56e90d49b18de5be21e5d3fca96aa",
+                            "signature": "6e4a69742589439edfab678fe7017f94c46b2082ef2dc7c2da946a24c981187dce73ef0a91f16b6048c64c42f5537211b21ce3d4fdef58377eeabfb9ad64ef41"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Multiple outputs with labels: multiple outputs for labeled address; same recipient",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "463044022003f01861a76c8ec3afebc8bee792c52159a024843794315ab3c12f8537424b3f02204456f24c0f18fc9b2d54bf9a9aa4d3c55a367fbaab79cb511873135510ee4a4021025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "483046022100e2d348a6683ef5a6183c99f6e5e0490fbc07262807ef96800d23d78dde2c03b7022100d80eb7c5ee7258a8ee7200022580ceb02af905a5905180941222a4bd1d4c97152103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac",
+                            "private_key": "0378e95685b74565fa56751b84a32dfd18545d10d691641b8372e32164fad66a"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            5.0
+                        ],
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgq5xznr7q7va9qqya76gktf32k2a9q7urxyh6pr9wj3a96p8960cyqtdrdl0",
+                            6.0
+                        ],
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqklxyqgwkvudqekrqczcmk8z73lve2g7wh0n354f4c7wlthkvhn3gqvaw2r",
+                            7.0
+                        ],
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqklxyqgwkvudqekrqczcmk8z73lve2g7wh0n354f4c7wlthkvhn3gqvaw2r",
+                            8.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                            5.0
+                        ],
+                        [
+                            "6a03e0353d94a5da5af238c1ce8c3740815e7920d385d139e14b4cc35901e388",
+                            6.0
+                        ],
+                        [
+                            "df6db64278db9d80a2d1616c4bdfcc31290953d0bf1a5691e49cd61070b5bd53",
+                            7.0
+                        ],
+                        [
+                            "4cc9275fa5f7a929841e06e6b2c4c696d811f818b28c9d1544a7b003cd745f5d",
+                            8.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "463044022003f01861a76c8ec3afebc8bee792c52159a024843794315ab3c12f8537424b3f02204456f24c0f18fc9b2d54bf9a9aa4d3c55a367fbaab79cb511873135510ee4a4021025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "483046022100e2d348a6683ef5a6183c99f6e5e0490fbc07262807ef96800d23d78dde2c03b7022100d80eb7c5ee7258a8ee7200022580ceb02af905a5905180941222a4bd1d4c97152103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac"
+                        }
+                    ],
+                    "outputs": [
+                        "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                        "6a03e0353d94a5da5af238c1ce8c3740815e7920d385d139e14b4cc35901e388",
+                        "df6db64278db9d80a2d1616c4bdfcc31290953d0bf1a5691e49cd61070b5bd53",
+                        "4cc9275fa5f7a929841e06e6b2c4c696d811f818b28c9d1544a7b003cd745f5d"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": [
+                        1
+                    ]
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgq5xznr7q7va9qqya76gktf32k2a9q7urxyh6pr9wj3a96p8960cyqtdrdl0"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                            "priv_key_tweak": "f990515fa92c9baa6504697d2ee1eec7e8320308490a53a6add12493ef96953c",
+                            "signature": "01322e61146a5dccaa246408289c4a48e4d332c74ab47a475fcaa95019a622d1b52a4c9d14af1c85afdb6a0e730e5cfd06cc8c2181aa14f78166ea70d710d76c"
+                        },
+                        {
+                            "pub_key": "6a03e0353d94a5da5af238c1ce8c3740815e7920d385d139e14b4cc35901e388",
+                            "priv_key_tweak": "0d6cfa12865975792f1a88fb5c374c4b07e56e90d49b18de5be21e5d3fca96aa",
+                            "signature": "6e4a69742589439edfab678fe7017f94c46b2082ef2dc7c2da946a24c981187dce73ef0a91f16b6048c64c42f5537211b21ce3d4fdef58377eeabfb9ad64ef41"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Single recipient: use silent payments for sender change",
+        "sending": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022100cf5be8628bbab39acd5a741bf83a355b41ab5b51875b9ab9ee47bbbbe1da831602205de22981c3de1609f719a7135aafd6239cb41880b7276cec941de119e62e8db821025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac",
+                            "private_key": "eadc78165ff1f8ea94ad7cfdc54990738a4c53f6e0507b42154201b8e5dff3b1"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "483046022100eb64dca73feddaa80b139fe5d907f67e85a22f2a440589eafd32f5a6adccf38a022100eb79de1419707c150cee153e4c0a9f16a3e88bae5270c43c869dd563ed8679a22103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac",
+                            "private_key": "0378e95685b74565fa56751b84a32dfd18545d10d691641b8372e32164fad66a"
+                        }
+                    ],
+                    "recipients": [
+                        [
+                            "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv",
+                            1.0
+                        ],
+                        [
+                            "sp1qqw6vczcfpdh5nf5y2ky99kmqae0tr30hgdfg88parz50cp80wd2wqqcdcp0nnsy6tn2372ylxt080qey7ktvgs32myw0jpphfe8dfpa74u7zjlg0",
+                            2.0
+                        ]
+                    ]
+                },
+                "expected": {
+                    "outputs": [
+                        [
+                            "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                            1.0
+                        ],
+                        [
+                            "f05874d2064c7af6e77ecb10389b29dad8418c95cd0fa7b35b667ab800527d77",
+                            2.0
+                        ]
+                    ]
+                }
+            }
+        ],
+        "receiving": [
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022100cf5be8628bbab39acd5a741bf83a355b41ab5b51875b9ab9ee47bbbbe1da831602205de22981c3de1609f719a7135aafd6239cb41880b7276cec941de119e62e8db821025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "483046022100eb64dca73feddaa80b139fe5d907f67e85a22f2a440589eafd32f5a6adccf38a022100eb79de1419707c150cee153e4c0a9f16a3e88bae5270c43c869dd563ed8679a22103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac"
+                        }
+                    ],
+                    "outputs": [
+                        "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                        "f05874d2064c7af6e77ecb10389b29dad8418c95cd0fa7b35b667ab800527d77"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "b8f87388cbb41934c50daca018901b00070a5ff6cc25a7e9e716a9d5b9e4d664",
+                        "scan_priv_key": "11b7a82e06ca2648d5fded2366478078ec4fc9dc1d8ff487518226f229d768fd"
+                    },
+                    "labels": [
+                        0
+                    ]
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqw6vczcfpdh5nf5y2ky99kmqae0tr30hgdfg88parz50cp80wd2wqqauj52ymtc4xdkmx3tgyhrsemg2g3303xk2gtzfy8h8ejet8fz8jcw23zua",
+                        "sp1qqw6vczcfpdh5nf5y2ky99kmqae0tr30hgdfg88parz50cp80wd2wqqcdcp0nnsy6tn2372ylxt080qey7ktvgs32myw0jpphfe8dfpa74u7zjlg0"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "f05874d2064c7af6e77ecb10389b29dad8418c95cd0fa7b35b667ab800527d77",
+                            "priv_key_tweak": "668cfe89e4b06c1932bf23f4ca408598ff3802e06131a36ea22ac0bac3f45f7a",
+                            "signature": "06aa6e0eafbf9b0f8e4c041c857f1222ffed20977638c477cea27e3110697f15f82c3949eaecc2e971869dae8069873219ea2e479873608b1fadcc1e40da7530"
+                        }
+                    ]
+                }
+            },
+            {
+                "given": {
+                    "inputs": [
+                        {
+                            "prevout": [
+                                "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+                                0,
+                                "473045022100cf5be8628bbab39acd5a741bf83a355b41ab5b51875b9ab9ee47bbbbe1da831602205de22981c3de1609f719a7135aafd6239cb41880b7276cec941de119e62e8db821025a1e61f898173040e20616d43e9f496fba90338a39faa1ed98fcbaeee4dd9be5",
+                                ""
+                            ],
+                            "scriptPubKey": "76a91419c2f3ae0ca3b642bd3e49598b8da89f50c1416188ac"
+                        },
+                        {
+                            "prevout": [
+                                "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+                                0,
+                                "483046022100eb64dca73feddaa80b139fe5d907f67e85a22f2a440589eafd32f5a6adccf38a022100eb79de1419707c150cee153e4c0a9f16a3e88bae5270c43c869dd563ed8679a22103782eeb913431ca6e9b8c2fd80a5f72ed2024ef72a3c6fb10263c379937323338",
+                                ""
+                            ],
+                            "scriptPubKey": "76a9147cdd63cc408564188e8e472640e921c7c90e651d88ac"
+                        }
+                    ],
+                    "outputs": [
+                        "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                        "f05874d2064c7af6e77ecb10389b29dad8418c95cd0fa7b35b667ab800527d77"
+                    ],
+                    "key_material": {
+                        "spend_priv_key": "9d6ad855ce3417ef84e836892e5a56392bfba05fa5d97ccea30e266f540e08b3",
+                        "scan_priv_key": "0f694e068028a717f8af6b9411f9a133dd3565258714cc226594b34db90c1f2c"
+                    },
+                    "labels": []
+                },
+                "expected": {
+                    "addresses": [
+                        "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv"
+                    ],
+                    "outputs": [
+                        {
+                            "pub_key": "3b604ca7e7422dfa536ded65bb11762a3f3213de5c91b6b7b3127c94f4bb49cf",
+                            "priv_key_tweak": "f990515fa92c9baa6504697d2ee1eec7e8320308490a53a6add12493ef96953c",
+                            "signature": "01322e61146a5dccaa246408289c4a48e4d332c74ab47a475fcaa95019a622d1b52a4c9d14af1c85afdb6a0e730e5cfd06cc8c2181aa14f78166ea70d710d76c"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+]
