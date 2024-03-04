@@ -39,8 +39,8 @@ Elements of the query component may contain characters outside the valid range. 
 
 (See also [[#Simpler syntax|a simpler representation of syntax]])
 
- bitcoinurn     = "bitcoin:" [ bitcoinaddress ] [ "?" bitcoinparams ]
- bitcoinaddress = *base58
+ bitcoinurn     = "bitcoin:" [ bitcoinaddress ] [ "?" bitcoinaddress ] [ "?" bitcoinparams ]
+ bitcoinaddress = *base58 / *bech32 / *bech32m
  bitcoinparams  = bitcoinparam [ "&" bitcoinparams ]
  bitcoinparam   = [ amountparam / labelparam / messageparam / otherparam / reqparam ]
  amountparam    = "amount=" *digit [ "." *digit ]
@@ -55,7 +55,13 @@ The scheme component ("bitcoin:") is case-insensitive, and implementations must 
 
 === Bitcoin Address ===
 
-The bitcoinaddress body MUST be either a base64 P2SH or P2PKH address, bech32 Segwit version 0 address, bech32m Segwit address, or empty. Future address formats SHOULD instead be placed in query keys as optional payment instructions to provide backwards compatibility during upgrade cycles. After new addres types are near-universally supported, or for recipients wishing to avoid a standard on-chain fallback, the bitcoinaddress part of the URI MAY be left empty.
+The bitcoinaddress body MUST be either a legacy base58 address (P2PKH, P2SH), or a bech32(m) encoded address. Future address formats that do not use bech32m encoding MUST instead be placed in query keys. Query keys SHOULD be defined by the respective BIP for the new address format.
+
+=== Human Readable Part ===
+
+Bech32(m) encoded addresses contain a Human Readable Part (HRP) for identifying the address. Clients MUST use the HRP in lieu of a ([[#Query Keys|query key (see below)]]). Recipients SHOULD include an optional `=o` character at the end of their address to ensure backwards compatibility with clients that expect URI components of the form `?key=value`. Senders MUST check for the two character optional value at the end of the address and remove it before sending.
+
+Once the new method of using the HRP value in lieu of a query key is near-universally supported, recipients MAY omit the optional value.
 
 === Query Keys ===
 
@@ -65,13 +71,7 @@ The following keys are defined generally and apply to any URI regardless of paym
 *address: bitcoin address
 *message: message that describes the transaction to the user ([[#Examples|see examples below]])
 
-The following keys are currently defined for payment instructions of various forms:
-
-*lightning: Lightning BOLT 11 invoices
-*lno: Lightning BOLT12 offers
-*sp: Silent Payment addresses
-
-New payment instructions using bech32 encodings SHOULD reuse their address format's Human Readable Part as the parameter key.
+Future payment instructions that are not bech32m encoded or where the HRP is not sufficient to unambiguosly identify the protocol SHOULD define a query parameter.
 
 ==== Transfer amount ====
 
@@ -108,27 +108,47 @@ Please see the BNF grammar above for the normative syntax.
 
 [foo] means optional, &lt;bar&gt; are placeholders
 
- <nowiki>bitcoin:<address>[?amount=<amount>][?label=<label>][?message=<message>]</nowiki>
+ <nowiki>bitcoin:<address>[?address][?amount=<amount>][?label=<label>][?message=<message>]</nowiki>
 
 === Examples ===
 
 Just the address:
  bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W
+ bitcoin:bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4
+ bitcoin:bc1p0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vqzk5jj0
 
 Address with name:
- bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?label=Luke-Jr
+ bitcoin:bc1q...v8f3t4?label=Luke-Jr
 
 Request 20.30 BTC to "Luke-Jr":
- bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=20.3&label=Luke-Jr
+ bitcoin:bc1q...v8f3t4?amount=20.3&label=Luke-Jr
 
 Request 50 BTC with message:
- bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz
+ bitcoin:bc1q...v8f3t4?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz
 
 Some future version that has variables which are (currently) not understood and required and thus invalid:
- bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?req-somethingyoudontunderstand=50&req-somethingelseyoudontget=999
+ bitcoin:bc1q...v8f3t4?req-somethingyoudontunderstand=50&req-somethingelseyoudontget=999
 
 Some future version that has variables which are (currently) not understood but not required and thus valid:
- bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?somethingyoudontunderstand=50&somethingelseyoudontget=999
+ bitcoin:bc1q...v8f3t4?somethingyoudontunderstand=50&somethingelseyoudontget=999
+
+Segwit v1 address (taproot) with a fallback to Segwit v0:
+ bitcoin:bc1q...v8f3t4?bc1p...zk5jj0=o
+
+Segwit v1 address (taproot) with multiple fallbacks:
+ bitcoin:175...Zv245W?bc1q...v8f3t4=o?bc1p...zk5jj0=o
+
+Address with BOLT11 invoice:
+ bitcoin:bc1q...v8f3t4?lnbc10...jazup6=o
+
+Address with BOLT11 invoice in query key:
+ bitcoin:bc1p...zk5jj0?lightning=lnbc10...jazup6
+
+Static BIP352 silent payment address with a fallback to Segwit v1 (taproot):
+ bitcoin:bc1p...zk5jj0?sp1q...9pkqwv=o
+
+Static URI with BIP352 silent payment address and BOLT12 offer:
+ bitcoin:sp1q...9pkqwv?lno1p...zyjczs
 
 Characters must be URI encoded properly.
 
