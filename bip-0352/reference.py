@@ -82,7 +82,7 @@ def get_pubkey_from_input(vin: VinInfo) -> ECPubKey:
 
 
 def get_input_hash(outpoints: List[COutPoint], sum_input_pubkeys: ECPubKey) -> bytes:
-    lowest_outpoint = sorted(outpoints, key=lambda outpoint: (outpoint.hash, outpoint.n))[0]
+    lowest_outpoint = sorted(outpoints, key=lambda outpoint: outpoint.serialize())[0]
     return TaggedHash("BIP0352/Inputs", lowest_outpoint.serialize() + cast(bytes, sum_input_pubkeys.get_bytes(False)))
 
 
