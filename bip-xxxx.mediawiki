@@ -1,0 +1,76 @@
+<pre>
+  BIP: TBD
+  Layer: Applications
+  Title: Silent Payments Output Descriptors
+  Author: josibake <josibake@protonmail.com>
+  Comments-URI: https://github.com/bitcoin/bips/wiki/Comments:BIP-XXXX
+  Status: Proposed
+  Type: Standards Track
+  Created: 2024-05-13
+  License: BSD-2-Clause
+  Post-History: < mailing list , if relevant >
+</pre>
+
+== Abstract ==
+
+This document specifies a Silent Payments output Descriptor.
+
+== Copyright ==
+
+This BIP is licensed under the BSD 2-clause license.
+
+== Motivation ==
+
+TODO:
+
+* Explain motivation for using Descriptors
+* Explain differences from bip32 Descriptors
+* Explain scanning
+* Explain new sppub and sppriv formats
+
+== Specification ==
+
+A new top level script expression is defined: <tt>sp(KEY, KEY)</tt>, <tt>sp(sppub...)</tt>, <tt>sp(sppriv...)</tt>.
+This expression can only be used as a top level expression.
+It takes exactly two key expressions as arguments and produces either 1 or more taproot outputs as scripts.
+
+=== Key Serialization (sppub, sppriv) ===
+
+Silent Payments public and private keys are serialized using [Bech32m] encoding as follows:
+
+* The human-readable part "sppub", "sppriv" for public mainnet, private mainnet and "tsppub", "tsppriv" for public testnet, private testnet.
+* The data-part values:
+** 1 byte: Silent Payments version (see BIP352)
+** 4 bytes: the fingerprint of the parent's key (0x00000000 if not derived from a master key)
+** 4 bytes: maximum number of labels used (0x00000000 for no labels) (might not need/want this?)
+** 32 bytes: the scan key
+** 33 bytes: the spend public key or spend private key data (ser<sub>P</sub>(K) for the spend public key, 0x00 || ser<sub>256</sub>(k) for the spend private key)
+
+Note that the fingerprint of the parent only serves as a fast way to detect the parent key in software, and software must be willing to deal with collisions. Internally, the full 160-bit identifier could be used.
+
+TODO:
+
+* sp(KEY, KEY) is only allowed as an input, will always be translated to sp(sppub...) for public key (watch-only), sp(sppriv...) for private key (backups).
+
+== Examples ==
+
+* watch-only / outsource scanning
+* backups
+
+== Test Vectors ==
+
+* generate from bip352 recommended derivation paths
+* wif scan, hex spend pub
+* wif scan, xpub/xpriv spend pub
+* hex scan, xpub/xpriv spend
+* xpriv, xpub/xpriv spend
+* sppriv
+* sppub
+
+== Acknowledgements ==
+
+Coredev design session
+
+== Rationale and References ==
+<references/>
+
